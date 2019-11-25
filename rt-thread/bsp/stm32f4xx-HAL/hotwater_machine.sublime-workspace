@@ -1,0 +1,690 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+		]
+	},
+	"buffers":
+	[
+		{
+			"contents": "/*\n * Copyright (c) 2006-2018, RT-Thread Development Team\n *\n * SPDX-License-Identifier: Apache-2.0\n *\n * Change Logs:\n * Date           Author       Notes\n * 2015-07-29     Arda.Fu      first implementation\n */\n#include <rtthread.h>\n#include <board.h>\n\nint main(void)\n{\n    /* user app entry */\n\tpthread_creat();\n    return 0;\n}\n",
+			"file": "applications/main.c",
+			"file_size": 313,
+			"file_write_time": 132024831140000000,
+			"settings":
+			{
+				"buffer_size": 330,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "",
+			"file": "applications/gprs_thread.c",
+			"file_size": 0,
+			"file_write_time": 132184460722692231,
+			"settings":
+			{
+				"buffer_size": 0,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "applications/WaterControl_thread.c",
+			"settings":
+			{
+				"buffer_size": 111,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"contents": "#ifndef __WATERCONTROL_THREAD_H\n#define __WATERCONTROL_THREAD_H\n\n\n\n\n\n\n\n\n\n\n#endif",
+			"file": "applications/WaterControl_thread.h",
+			"file_size": 0,
+			"file_write_time": 132184467597874487,
+			"settings":
+			{
+				"buffer_size": 80,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "drivers/board.c",
+			"settings":
+			{
+				"buffer_size": 8570,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/F/hotwater_machine/rt-thread/src/components.c",
+			"settings":
+			{
+				"buffer_size": 6092,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "Searching 6485 files for \"__rt_init_desc_rti_board_end\"\n\nF:\\hotwater_machine\\rt-thread\\src\\components.c:\n   86      int result;\n   87      const struct rt_init_desc *desc;\n   88:     for (desc = &__rt_init_desc_rti_board_start; desc < &__rt_init_desc_rti_board_end; desc ++)\n   89      {\n   90          rt_kprintf(\"initialize %s\", desc->fn_name);\n   ..\n  112  \n  113      rt_kprintf(\"do components initialization.\\n\");\n  114:     for (desc = &__rt_init_desc_rti_board_end; desc < &__rt_init_desc_rti_end; desc ++)\n  115      {\n  116          rt_kprintf(\"initialize %s\", desc->fn_name);\n\n2 matches in 1 file\n\n\nSearching 6485 files for \"pthread_creat\"\n\nF:\\hotwater_machine\\rt-thread\\components\\libc\\pthreads\\pthread.c:\n  160      /* clear cleanup function */\n  161      tid->cleanup = RT_NULL;\n  162:     if (ptd->attr.detachstate == PTHREAD_CREATE_JOINABLE)\n  163      {\n  164          rt_sem_release(ptd->joinable_sem);\n  ...\n  184  }\n  185  \n  186: int pthread_create(pthread_t            *pid,\n  187                     const pthread_attr_t *attr,\n  188                     void *(*start)(void *), void *parameter)\n  ...\n  243      }\n  244  \n  245:     if (ptd->attr.detachstate == PTHREAD_CREATE_JOINABLE)\n  246      {\n  247          ptd->joinable_sem = rt_sem_create(name, 0, RT_IPC_FLAG_FIFO);\n  ...\n  290      return ret;\n  291  }\n  292: RTM_EXPORT(pthread_create);\n  293  \n  294  int pthread_detach(pthread_t thread)\n  ...\n  298  \n  299      rt_enter_critical();\n  300:     if (ptd->attr.detachstate == PTHREAD_CREATE_DETACHED)\n  301      {\n  302          /* The implementation has detected that the value specified by thread does not refer\n  ...\n  315  \n  316              /* change to detach state */\n  317:             ptd->attr.detachstate = PTHREAD_CREATE_DETACHED;\n  318  \n  319              /* detach joinable semaphore */\n  ...\n  335      {\n  336          /* change to detach state */\n  337:         ptd->attr.detachstate = PTHREAD_CREATE_DETACHED;\n  338  \n  339          /* detach joinable semaphore */\n  ...\n  363      }\n  364  \n  365:     if (ptd->attr.detachstate == PTHREAD_CREATE_DETACHED)\n  366          return EINVAL; /* join on a detached pthread */\n  367  \n\nF:\\hotwater_machine\\rt-thread\\components\\libc\\pthreads\\pthread.h:\n   27  #define PTHREAD_MUTEX_INITIALIZER   {-1, 0}\n   28  \n   29: #define PTHREAD_CREATE_JOINABLE     0x00\n   30: #define PTHREAD_CREATE_DETACHED     0x01\n   31  \n   32  #define PTHREAD_EXPLICIT_SCHED      0\n   ..\n  162  int pthread_attr_getscope(pthread_attr_t const *attr);\n  163  int pthread_system_init(void);\n  164: int pthread_create (pthread_t *tid, const pthread_attr_t *attr, \n  165      void *(*start) (void *), void *arg);\n  166  \n\nF:\\hotwater_machine\\rt-thread\\components\\libc\\pthreads\\pthread_attr.c:\n   27          DEFAULT_PRIORITY,       /* scheduler priority */\n   28      },\n   29:     PTHREAD_CREATE_JOINABLE,    /* detach state */\n   30  };\n   31  \n   ..\n   54      RT_ASSERT(attr != RT_NULL);\n   55  \n   56:     if (state != PTHREAD_CREATE_JOINABLE && state != PTHREAD_CREATE_DETACHED)\n   57          return EINVAL;\n   58  \n\nF:\\hotwater_machine\\rt-thread\\examples\\libc\\ex1.c:\n   24  \tvoid *retval;\n   25  \n   26: \tret += (pret = pthread_create(&th_a, NULL, process, (void *)\"a\"));\n   27  \tprintf(\"create a %s %d\\n\", sucfail(pret), pret);\n   28: \tret += (pret = pthread_create(&th_b, NULL, process, (void *)\"b\"));\n   29  \tprintf(\"create b %s %d\\n\", sucfail(pret), pret);\n   30  \tret += (pret = pthread_join(th_a, &retval));\n\nF:\\hotwater_machine\\rt-thread\\examples\\libc\\ex2.c:\n  104    init(&buffer);\n  105    /* Create the threads */\n  106:   pthread_create(&th_a, NULL, producer, 0);\n  107:   pthread_create(&th_b, NULL, consumer, 0);\n  108    /* Wait until producer and consumer finish. */\n  109    pthread_join(th_a, &retval);\n\nF:\\hotwater_machine\\rt-thread\\examples\\libc\\ex3.c:\n   36    /* Create the searching threads */\n   37    for (started=0; started<NUM_THREADS; started++)\n   38:     pthread_create(&threads[started], NULL, search, (void *)pid);\n   39  \n   40    /* Wait for (join) all the searching threads */\n\nF:\\hotwater_machine\\rt-thread\\examples\\libc\\ex4.c:\n   98  \n   99    // res = str_accumulate(\"Result of \");\n  100:   pthread_create(&th1, NULL, process, (void *) \"first\");\n  101:   pthread_create(&th2, NULL, process, (void *) \"second\");\n  102    // res = str_accumulate(\"initial thread\");\n  103    printf(\"Thread %lx: \\\"%s\\\"\\n\", pthread_self(), res);\n\nF:\\hotwater_machine\\rt-thread\\examples\\libc\\ex5.c:\n   94    init(&buffer);\n   95    /* Create the threads */\n   96:   pthread_create(&th_a, NULL, producer, 0);\n   97:   pthread_create(&th_b, NULL, consumer, 0);\n   98    /* Wait until producer and consumer finish. */\n   99    pthread_join(th_a, &retval);\n\nF:\\hotwater_machine\\rt-thread\\examples\\libc\\ex6.c:\n   20  \t\tint status;\n   21  \n   22: \t\tstatus = pthread_create(&thread, NULL, test_thread, NULL);\n   23  \t\tif (status != 0) {\n   24  \t\t\tprintf(\"status = %d, count = %lu: %s\\n\", status, count, strerror(\n\nF:\\hotwater_machine\\rt-thread\\examples\\libc\\ex7.c:\n   74  \n   75  \t\t/* pass down the milli-second timeout in the void* param */\n   76: \t\tstatus = pthread_create(&thread, NULL, test_thread, (void*) (count\n   77  \t\t\t\t* 100));\n   78  \t\tif (status != 0) {\n\nF:\\hotwater_machine\\rt-thread\\examples\\libc\\mq.c:\n   99  \t\treturn -1;\n  100  \t}\n  101: \tpthread_create(&send1, NULL, (void *)send_1, (void *)&mq1);\n  102: \tpthread_create(&send2, NULL, (void *)send_2, (void *)&mq2);\n  103:         pthread_create(&rev1, NULL, (void *)receive_1, (void *)&mq1);\t\n  104:         pthread_create(&rev2, NULL, (void *)receive_2, (void *)&mq2);\t\n  105  \tpthread_join(send1, NULL);\n  106  \tpthread_join(send2, NULL);\n\nF:\\hotwater_machine\\rt-thread\\examples\\libc\\sem.c:\n   34  \t\n   35  \t/* create the \"other\" thread */\n   36: \tif(pthread_create(&tid, 0, &other_thread, 0)!=0)\n   37  \t\t/* error */\n   38: \t\tprintf(\"pthread_create OtherThread failed.\\n\");\n   39  \telse\n   40  \t\tprintf(\"created OtherThread=%x\\n\", tid);\n\nF:\\hotwater_machine\\rt-thread\\libcpu\\sim\\posix\\cpu_port.c:\n  197      /* No need to join the threads. */\n  198      pthread_attr_init(&attr);\n  199:     pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);\n  200  \n  201      /* create a posix thread */\n  202:     res = pthread_create(&thread->pthread, &attr, &thread_run, (void *)thread);\n  203      if (res)\n  204      {\n\nF:\\hotwater_machine\\rt-thread\\tools\\gcc.py:\n  126                  stdc = re.findall('[\\d]+', line)[0]\n  127  \n  128:             if re.findall('pthread_create', line):\n  129                  posix_thread = 1\n  130      \n\n34 matches across 14 files\n",
+			"settings":
+			{
+				"buffer_size": 6626,
+				"line_ending": "Windows",
+				"name": "Find Results",
+				"scratch": true
+			}
+		},
+		{
+			"file": "/F/hotwater_machine/rt-thread/components/libc/pthreads/pthread.c",
+			"settings":
+			{
+				"buffer_size": 15916,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Libraries/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc_ex.h",
+			"settings":
+			{
+				"buffer_size": 433361,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/F/hotwater_machine/rt-thread",
+		"/F/hotwater_machine/rt-thread/bsp",
+		"/F/hotwater_machine/rt-thread/bsp/stm32f4xx-HAL",
+		"/F/hotwater_machine/rt-thread/bsp/stm32f4xx-HAL/applications"
+	],
+	"file_history":
+	[
+		"/F/hotwater_machine/rt-thread/include/rtdebug.h",
+		"/F/hotwater_machine/rt-thread/bsp/stm32/libraries/templates/stm32f4xx/rtconfig.h"
+	],
+	"find":
+	{
+		"height": 27.0
+	},
+	"find_in_files":
+	{
+		"height": 101.0,
+		"where_history":
+		[
+			"F:\\hotwater_machine\\rt-thread\\bsp\\stm32f4xx-HAL,F:\\hotwater_machine",
+			"F:\\hotwater_machine\\rt-thread\\bsp\\stm32f4xx-HAL"
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"pthread_creat",
+			"rt_application_init",
+			"rt_hw_board_init",
+			"__rt_init_desc_rti_board_start",
+			"__rt_init_desc_rti_board_end",
+			"__rt_init_rti_board_end",
+			"__rt_init_rti_board_start",
+			"__rt_init_desc_rti_board_start",
+			"init_fn_t",
+			"__rt_init_rti_board_end",
+			"rt_application_init",
+			"rtthread.h"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 2,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "applications/main.c",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 330,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								128,
+								128
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "applications/gprs_thread.c",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 0,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "applications/WaterControl_thread.c",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 111,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								109,
+								109
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "applications/WaterControl_thread.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 80,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								67,
+								67
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "drivers/board.c",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 8570,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								8215,
+								8215
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 4328.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "/F/hotwater_machine/rt-thread/src/components.c",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 6092,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4656,
+								4656
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 3152.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 6626,
+						"regions":
+						{
+							"match":
+							{
+								"flags": 112,
+								"regions":
+								[
+									[
+										236,
+										264
+									],
+									[
+										443,
+										471
+									],
+									[
+										832,
+										845
+									],
+									[
+										954,
+										967
+									],
+									[
+										1184,
+										1197
+									],
+									[
+										1355,
+										1368
+									],
+									[
+										1510,
+										1523
+									],
+									[
+										1753,
+										1766
+									],
+									[
+										1939,
+										1952
+									],
+									[
+										2086,
+										2099
+									],
+									[
+										2323,
+										2336
+									],
+									[
+										2371,
+										2384
+									],
+									[
+										2574,
+										2587
+									],
+									[
+										2852,
+										2865
+									],
+									[
+										2994,
+										3007
+									],
+									[
+										3030,
+										3043
+									],
+									[
+										3198,
+										3211
+									],
+									[
+										3330,
+										3343
+									],
+									[
+										3611,
+										3624
+									],
+									[
+										3662,
+										3675
+									],
+									[
+										3962,
+										3975
+									],
+									[
+										4206,
+										4219
+									],
+									[
+										4270,
+										4283
+									],
+									[
+										4559,
+										4572
+									],
+									[
+										4610,
+										4623
+									],
+									[
+										4845,
+										4858
+									],
+									[
+										5146,
+										5159
+									],
+									[
+										5341,
+										5354
+									],
+									[
+										5409,
+										5422
+									],
+									[
+										5484,
+										5497
+									],
+									[
+										5562,
+										5575
+									],
+									[
+										5807,
+										5820
+									],
+									[
+										5891,
+										5904
+									],
+									[
+										6183,
+										6196
+									],
+									[
+										6273,
+										6286
+									],
+									[
+										6522,
+										6535
+									]
+								],
+								"scope": ""
+							}
+						},
+						"selection":
+						[
+							[
+								962,
+								962
+							]
+						],
+						"settings":
+						{
+							"detect_indentation": false,
+							"line_numbers": false,
+							"output_tag": 2,
+							"result_base_dir": "",
+							"result_file_regex": "^([^ \t].*):$",
+							"result_line_regex": "^ +([0-9]+):",
+							"scroll_past_end": true,
+							"syntax": "Packages/Default/Find Results.hidden-tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 153.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "/F/hotwater_machine/rt-thread/components/libc/pthreads/pthread.c",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 15916,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4232,
+								4246
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 3024.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "Libraries/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc_ex.h",
+					"semi_transient": true,
+					"settings":
+					{
+						"buffer_size": 433361,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								419049,
+								419060
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 123093.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 8,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 27.0
+	},
+	"input":
+	{
+		"height": 39.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "Packages/C++/C Single File.sublime-build",
+	"project": "hotwater_machine.sublime-project",
+	"replace":
+	{
+		"height": 50.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 301.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
