@@ -1,4 +1,5 @@
 #include "WaterControl_thread.h"
+#include "stdbool.h" 
 /*
 *@brief This function control water pump for draw out
  the hot water

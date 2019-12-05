@@ -19,7 +19,7 @@ if  CROSS_TOOL  == 'gcc':
 	EXEC_PATH 	= 'D:/ArdaArmTools/GNUARM_4.9_2015q1/bin'
 elif CROSS_TOOL == 'keil':
 	PLATFORM 	= 'armcc'
-	EXEC_PATH 	= 'C:/Keil_v5'
+	EXEC_PATH 	= 'E:/Keil_v5'
 elif CROSS_TOOL == 'iar':
 	PLATFORM 	= 'iar'
 	EXEC_PATH 	= 'C:/Program Files (x86)/IAR Systems/Embedded Workbench 7.2'

@@ -3,6 +3,6 @@
 
 
 
-static void hot_water_control()
+static void hot_water_control(int timeout);
 
 #endif
