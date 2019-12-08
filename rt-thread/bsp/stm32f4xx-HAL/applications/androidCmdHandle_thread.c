@@ -1,16 +1,17 @@
-#include "androidCmdHandle_thread.c"
+#include "androidCmdHandle_thread.h"
 #include "user_def.h"
-ThreadStruct(AndroidCmdHandle_thread);
+#include <board.h>
+#include <rtdevice.h>
+#include "pthread.h"
 
+ThreadStruct(ThreadStructName_def(AndroidCmdHandlel_THREAD));
+ThreadDef_Init(ThreadStructName_def(AndroidCmdHandlel_THREAD), AndroidCmdHandlel_class);
 /**/
 static void start(void *arg);
 static void *run(void *arg);
 /**/
 static pthread_t tid;
 
-struct AndroidCmdHandle_thread_class={
-	start;
-};
 
 static void *run(void *arg)
 {
@@ -24,12 +25,6 @@ static void start(void *arg)
 	pthread_create(&tid, NULL, run, arg);
 }
 
-
-
-struct AndroidCmdHandle_thread_Class
-{
-	
-};
 
 static void send_heart_once(void)
 {

@@ -1,6 +1,8 @@
 #include "gprs_thread.h"
 #include "pthread.h"
 #include "user_def.h"
+#include <rtdevice.h>
+
 
 ThreadStruct(ThreadStructName_def(GPRS_THREAD));
 ThreadDef_Init(ThreadStructName_def(GPRS_THREAD), gprs_class);
@@ -20,7 +22,7 @@ static void start(void *arg)
 
 static void cmd_check(char *cmd, char *check_value, int count){
 	static char buffer[20]={0};
-	printf("initial system %s", cmd);
+	rt_kprintf("initial system %s", cmd);
 	for(int i=0; i<count; i++){
 		write(cmd);
 		read(buffer);
@@ -28,10 +30,10 @@ static void cmd_check(char *cmd, char *check_value, int count){
 			break;
 		}
 		else{
-			printf(".");
+			rt_kprintf(".");
 		}
 	}
-	printf("\r\n");
+	rt_kprintf("\r\n");
 }
 
 
@@ -39,7 +41,7 @@ static void cmd_check(char *cmd, char *check_value, int count){
 static void gprs_system_on(void)
 {
 	cmd_check("AT\r\n", "OK", 0xFFFFFFFF);
-	cmd_check("AT+CPIN?\r\n", );
+	cmd_check("AT+CPIN?\r\n", "OK", 0x50);
 }
 static void tcp_connect(char *Server_IP, char *Server_Port)
 {

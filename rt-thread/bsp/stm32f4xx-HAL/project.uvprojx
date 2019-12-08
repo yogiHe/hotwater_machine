@@ -335,7 +335,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F401xE, USE_HAL_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>.;..\..\include;applications;.;drivers;Libraries\CMSIS\Device\ST\STM32F4xx\Include;Libraries\CMSIS\Include;Libraries\STM32F4xx_HAL_Driver\Inc;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m4;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\finsh;..\..\components\libc\time;..\..\components\libc\pthreads;..\..\components\libc\compilers\armlibc;.\applications</IncludePath>
+              <IncludePath>.;..\..\include;applications;.;drivers;Libraries\CMSIS\Device\ST\STM32F4xx\Include;Libraries\CMSIS\Include;Libraries\STM32F4xx_HAL_Driver\Inc;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m4;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\finsh;..\..\components\libc\time;..\..\components\libc\pthreads;..\..\components\libc\compilers\armlibc;.\applications;..\..\components\utilities\ulog</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -479,6 +479,11 @@
               <FileType>1</FileType>
               <FilePath>.\applications\WaterControl_thread.c</FilePath>
             </File>
+            <File>
+              <FileName>androidCmdHandle_thread.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\applications\androidCmdHandle_thread.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -503,6 +508,11 @@
               <FileName>drv_usart.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\drv_usart.c</FilePath>
+            </File>
+            <File>
+              <FileName>drv_thermocouple.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\drivers\drv_thermocouple.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1028,6 +1038,11 @@
               <FileName>workqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\src\workqueue.c</FilePath>
+            </File>
+            <File>
+              <FileName>adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\misc\adc.c</FilePath>
             </File>
           </Files>
         </Group>
