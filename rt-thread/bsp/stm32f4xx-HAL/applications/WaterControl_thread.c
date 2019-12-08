@@ -1,5 +1,22 @@
 #include "WaterControl_thread.h"
 #include "stdbool.h" 
+#include "user_def.h"
+
+ThreadStruct(ThreadStructName_def(WaterControl_THREAD));
+ThreadDef_Init(ThreadStructName_def(WaterControl_THREAD), WaterControl_class);
+
+static pthread_t tid;
+static void *run(void *arg)
+{
+	for(;;){
+	
+	}
+}
+
+static void start(void *arg)
+{
+	pthread_create(&tid, NULL, run, arg);
+}
 /*
 *@brief This function control water pump for draw out
  the hot water

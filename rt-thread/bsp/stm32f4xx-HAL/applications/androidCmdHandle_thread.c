@@ -1,4 +1,35 @@
 #include "androidCmdHandle_thread.c"
+#include "user_def.h"
+ThreadStruct(AndroidCmdHandle_thread);
+
+/**/
+static void start(void *arg);
+static void *run(void *arg);
+/**/
+static pthread_t tid;
+
+struct AndroidCmdHandle_thread_class={
+	start;
+};
+
+static void *run(void *arg)
+{
+	for(;;){
+	
+	}
+}
+
+static void start(void *arg)
+{
+	pthread_create(&tid, NULL, run, arg);
+}
+
+
+
+struct AndroidCmdHandle_thread_Class
+{
+	
+};
 
 static void send_heart_once(void)
 {
@@ -67,7 +98,7 @@ static uint16_t crc16_calculate(const uint8_t *data, uint16_t length)
 
 
 */
-int stream_data_handle(unsigned char *pdata)
+static int stream_data_handle(unsigned char *pdata)
 {
 	int ret = NO_ERR;
 	unsigned char pck_length = 0;
