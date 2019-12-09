@@ -17,7 +17,13 @@ static void *run(void *arg)
 
 static void start(void *arg)
 {
-	pthread_create(&tid, NULL, run, arg);
+	pthread_attr_t attr;
+	pthread_attr_init(&attr);
+	struct sched_param sched=sched_get_priority_max(SCHED_FIFO);
+	pthread_attr_setschedpolicy(&attr, SCHED_FIFO);
+	pthread_attr_setschedparam(&attr, sched);
+	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+	pthread_create(&tid, &attr, run, arg);
 }
 
 static void cmd_check(char *cmd, char *check_value, int count){

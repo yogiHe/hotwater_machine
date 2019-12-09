@@ -28,7 +28,10 @@ static void start(void *arg)
 
 static void send_heart_once(void)
 {
-
+	unsigned char data[]={0x7e, DIRDIRECTION_STC, CHANNEL_ONE, 0x01, 0xff,0,0,0x7e};
+	uint16_t crc = crc16_calculate(data, sizeof(data)-2);
+	data[sizeof(data)-2] = crc>>8;
+	data[sizeof(data)-1] = crc&0xff;
 }
 
 static void send_out_water()
