@@ -4,13 +4,43 @@
 #include <rtdevice.h>
 #include "pthread.h"
 
+static rt_device_t uart_dev;
 ThreadStruct(ThreadStructName_def(AndroidCmdHandlel_THREAD));
 ThreadDef_Init(ThreadStructName_def(AndroidCmdHandlel_THREAD), AndroidCmdHandlel_class);
+
+static uint16_t crc16_calculate(const uint8_t *data, uint16_t length);
 /**/
 static void start(void *arg);
 static void *run(void *arg);
 /**/
 static pthread_t tid;
+
+static void open_uart()
+{
+	struct serial_configure cfg={
+		.baud_rate = 115200,
+		.data_bits = DATA_BITS_8,
+		.stop_bits = UART_STOPBITS_1,
+		.parity = PARITY_NONE,
+
+	};
+
+	uart_dev = (rt_device_t)rt_device_find("uart2");
+	if(uart_dev == NULL){
+		rt_kprintf("uart2 run failed! can't find %s device!\n", "uart2");
+	}
+//	res = rt_device_set_rx_indicate(uart_device, uart_intput);
+	int res = rt_device_open(uart_dev, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_INT_RX );
+//	rt_event_init(&even t, "event", RT_IPC_FLAG_FIFO);
+
+	((rt_serial_t *)uart_dev)->ops->configure((rt_serial_t *)uart_dev , &cfg);
+	((rt_serial_t *)uart_dev)->ops->control((rt_serial_t *)uart_dev ,RT_DEVICE_CTRL_SET_INT, NULL);
+}
+static void init()
+{
+
+}
+
 
 
 static void *run(void *arg)

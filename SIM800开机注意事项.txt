@@ -1,0 +1,26 @@
+开机时处理流程：
+把POWERKEY拉低，然后每秒发送一次AT，直到模块回复OK后，放开POWERKEY，说明模块开机成功
+
+不用AT+CGATT，用AT+CGREG?
+返回0，1或0，5
+就表示注册成功，如果返回其他值，按照流程图，每500毫秒重发查询
+
+AT+CIICR或其他超时时间长的命令，超时时间可以是30秒，不能再短了
+
+AT+CIPSHUT命令后出错，都可以回到AT+CIPSHUT，再继续按流程图走
+
+AT+CIPSEND后，可以强制等200毫秒，就不用判断>，200毫秒后，MCU直接发送数据内容
+
+
+如果模块被踢后，用AT+CIFSR查询IP，如果有IP，发AT+CIPSTART连服务器，如果没有IP，发AT+CIPSHUT，再开始
+
+
+
+模块断电前必须先用POWERKEY关机，POWERKEY拉低后，检测STATUS引脚，当引脚变低后，给模块断电
+
+如果模块IP没了，会上报PDP DEACT字符串给MCU
+
+
+心跳10min、 pull 1.5min  10.3478ma*h
+
+心跳1.5min  11.4597

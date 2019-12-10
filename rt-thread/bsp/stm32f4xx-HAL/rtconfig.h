@@ -206,5 +206,6 @@
 #define RT_HSE_VALUE 8000000
 #define RT_HSE_HCLK 168000000
 #define BSP_USING_UART1
+#define BSP_USING_UART2
 
 #endif
