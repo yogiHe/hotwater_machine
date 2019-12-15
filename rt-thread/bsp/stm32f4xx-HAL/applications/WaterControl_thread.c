@@ -5,24 +5,31 @@
 #include "user_def.h"
 #include <board.h>
 #include <rtdevice.h>
+#include <rtthread.h>
+#include <pthread.h>
 
-
-ThreadStruct(ThreadStructName_def(WaterControl_THREAD));
-ThreadDef_Init(ThreadStructName_def(WaterControl_THREAD), WaterControl_class);
+ThreadDef_Init(WaterControl_class);
 
 rt_adc_device_t adc_dev;
-static const int adc_channle = 4;
+static const int adc_channle = 8;
 static pthread_t tid;
 
+static int init(void);
+static float get_water_temp(void);
+extern ADC_HandleTypeDef hadc1;
 static void *run(void *arg)
 {
+//	config();
 	for(;;){
-	
+		msleep(1000);
+//		HAL_ADC_Start(&hadc1);
+		get_water_temp();
 	}
 }
 
 static void start(void *arg)
 {
+	init();
 	pthread_create(&tid, NULL, run, arg);
 }
 /*
@@ -66,14 +73,18 @@ void waterControl_thread_handle(void *parameter)
 
 }
 
-static int init()
+static int init(void)
 {
-
+//	unsigned int ADC_DEV_CHANNEL=4;
+//	int value;
 	adc_dev = (rt_adc_device_t)rt_device_find("adc1");
 	if(adc_dev == NULL){
 		rt_kprintf("adc sample run failed! can't find %s device!\n", "adc1");
 		return RT_ERROR;
 	}
+//	rt_device_open(adc_dev, RT_DEVICE_FLAG_RDWR);
+//	rt_device_control(adc_dev, RT_ADC_CMD_ENABLE, (void*)ADC_DEV_CHANNEL);
+//	rt_device_read(adc_dev, ADC_DEV_CHANNEL, &value, 4);
 	rt_adc_enable(adc_dev, adc_channle);
 	int value = rt_adc_read(adc_dev, adc_channle);
 	rt_kprintf("the value is :%d \n", value);
@@ -81,10 +92,12 @@ static int init()
 	rt_kprintf("the voltage is :%d.%02d \n", vol / 100, vol % 100);
 }
 
-float get_water_temp(void)
+static float get_water_temp(void)
 {
+//	int value;unsigned int ADC_DEV_CHANNEL=4;
+//	int ret=rt_device_read(adc_dev, ADC_DEV_CHANNEL, &value, 4);
 	int value = rt_adc_read(adc_dev, adc_channle);
-	rt_kprintf("the value is :%d \n", value);
+	rt_kprintf("the value is :%d  \n", value);
 	int vol = value * 330 / 4096;
 	rt_kprintf("the voltage is :%d.%02d \n", vol / 100, vol % 100);
 }

@@ -9,10 +9,14 @@
  */
 #include <rtthread.h>
 #include <board.h>
+#include <user_def.h>
+#include <watercontrol_thread.h>
+#include "user_def.h"
 
+extern ThreadStruct_Tydef WaterControl_class;
 int main(void)
 {
     /* user app entry */
-
+	WaterControl_class.start(NULL);
     return 0;
 }

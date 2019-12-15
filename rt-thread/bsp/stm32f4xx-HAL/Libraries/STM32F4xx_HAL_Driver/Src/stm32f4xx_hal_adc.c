@@ -381,7 +381,17 @@ HAL_StatusTypeDef HAL_ADC_DeInit(ADC_HandleTypeDef* hadc)
 __weak void HAL_ADC_MspInit(ADC_HandleTypeDef* hadc)
 {
   /* Prevent unused argument(s) compilation warning */
-  UNUSED(hadc);
+	GPIO_InitTypeDef GPIO_InitStructure;
+
+
+
+	__HAL_RCC_GPIOB_CLK_ENABLE();
+	__HAL_RCC_ADC1_CLK_ENABLE();
+	
+    GPIO_InitStructure.Mode = GPIO_MODE_ANALOG;
+    GPIO_InitStructure.Pin = GPIO_PIN_0;
+    GPIO_InitStructure.Pull = GPIO_NOPULL;
+    HAL_GPIO_Init(GPIOB,&GPIO_InitStructure);
   /* NOTE : This function Should not be modified, when the callback is needed,
             the HAL_ADC_MspInit could be implemented in the user file
    */ 

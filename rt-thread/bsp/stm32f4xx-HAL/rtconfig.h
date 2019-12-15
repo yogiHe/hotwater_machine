@@ -10,7 +10,7 @@
 #define RT_ALIGN_SIZE 4
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
-#define RT_TICK_PER_SECOND 100
+#define RT_TICK_PER_SECOND 1000
 #define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
 #define RT_USING_IDLE_HOOK
@@ -39,7 +39,7 @@
 #define RT_USING_DEVICE
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
-#define RT_CONSOLE_DEVICE_NAME "uart2"
+#define RT_CONSOLE_DEVICE_NAME "uart1"
 #define RT_VER_NUM 0x40001
 
 /* RT-Thread Components */
@@ -203,9 +203,9 @@
 /* samples: kernel and components samples */
 
 #define SOC_STM32F401RE
-#define RT_HSE_VALUE 8000000
-#define RT_HSE_HCLK 168000000
+#define RT_USING_HSI
+#define RT_HSE_HCLK 84000000
 #define BSP_USING_UART1
 #define BSP_USING_UART2
-
+#define BSP_USING_ADC1
 #endif

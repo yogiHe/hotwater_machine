@@ -7,9 +7,10 @@
 #define read(A)
 
 static void open_uart();
-ThreadStruct(ThreadStructName_def(GPRS_THREAD));
-ThreadDef_Init(ThreadStructName_def(GPRS_THREAD), gprs_class);
+static void gprs_system_on(void);
 
+ThreadDef_Init(gprs_class);
+static rt_device_t uart_dev;
 static pthread_t tid;
 static void *run(void *arg)
 {
@@ -70,7 +71,7 @@ static void open_uart()
 	struct serial_configure cfg={
 		.baud_rate = 115200,
 		.data_bits = DATA_BITS_8,
-		.stop_bits = UART_STOPBITS_1,
+		.stop_bits = STOP_BITS_1,
 		.parity = PARITY_NONE,
 
 	};

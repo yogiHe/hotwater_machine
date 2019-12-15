@@ -3,22 +3,21 @@
 
 typedef void(*pfunction_t)(void *arg);
 
-#define ThreadStructName_def(A) A_##CLASS
+typedef struct {
+	pfunction_t start;
+}ThreadStruct_Tydef;
 
-#define ThreadStruct(A)  struct A{\
-		pfunction_t start;\
-}
-#define ThreadDef_Init(struct_def, name)  \
+#define ThreadDef_Init(name)  \
 		static void start(void *arg);\
 		static void *run(void *arg);\
-		struct struct_def name={\
+		ThreadStruct_Tydef name={\
 			start,\
-		};\
-		extern struct struct_def name
+		}
+#define msleep rt_thread_delay
+//extern struct struct_def name
 
 
 typedef void(*pfunction_t)(void *);
-
 
 
 

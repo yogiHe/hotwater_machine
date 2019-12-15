@@ -98,22 +98,76 @@ rt_err_t rt_hw_adc_register(rt_adc_device_t device, const char *name, const stru
 
     return result;
 }
+//#include "board.h"
 
+//ADC_HandleTypeDef hadc1;
 rt_uint32_t rt_adc_read(rt_adc_device_t dev, rt_uint32_t channel)
 {
     rt_uint32_t value;
 
     RT_ASSERT(dev);
-
+//	HAL_ADC_Start(&hadc1);
     dev->ops->convert(dev, channel, &value);
 
     return value;
 }
 
+
+//void config()
+//{
+//    GPIO_InitTypeDef GPIO_InitStructure;//
+
+//		ADC_InitTypeDef ADC_InitStructyre;
+//		ADC_HandleTypeDef AdcHandle;
+//		__HAL_RCC_GPIOB_CLK_ENABLE();
+//		__HAL_RCC_ADC1_CLK_ENABLE();
+//	
+//    GPIO_InitStructure.Mode = GPIO_MODE_ANALOG;
+//    GPIO_InitStructure.Pin = GPIO_PIN_0;
+//    GPIO_InitStructure.Pull = GPIO_NOPULL;
+////    GPIO_InitStructure.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+//    HAL_GPIO_Init(GPIOB,&GPIO_InitStructure);
+//	//
+
+//	
+//  ADC_ChannelConfTypeDef sConfig = {0};//
+
+//  /* USER CODE BEGIN ADC1_Init 1 *///
+
+//  /* USER CODE END ADC1_Init 1 */
+//  /** Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion) 
+//  */
+//  hadc1.Instance = ADC1;
+//  hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4;
+//  hadc1.Init.Resolution = ADC_RESOLUTION_12B;
+//  hadc1.Init.ScanConvMode = DISABLE;
+//  hadc1.Init.ContinuousConvMode = ENABLE;
+//  hadc1.Init.DiscontinuousConvMode = DISABLE;
+//  hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
+//  hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
+//  hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
+//  hadc1.Init.NbrOfConversion = 1;
+//  hadc1.Init.DMAContinuousRequests = DISABLE;
+//  hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
+//  if (HAL_ADC_Init(&hadc1) != HAL_OK)
+//  {
+//    rt_kprintf("HAL_ADC_Init err");
+//  }
+//  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time. 
+//  */
+//  sConfig.Channel = ADC_CHANNEL_8;
+//  sConfig.Rank = 1;
+//  sConfig.SamplingTime = ADC_SAMPLETIME_3CYCLES;
+//  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+//  {
+//     rt_kprintf("HAL_ADC_ConfigChannel err");
+//  }
+////	HAL_ADC_Start(&AdcHandle);
+//}
 rt_err_t rt_adc_enable(rt_adc_device_t dev, rt_uint32_t channel)
 {
     rt_err_t result = RT_EOK;
-
+//		config();
     RT_ASSERT(dev);
     if (dev->ops->enabled != RT_NULL)
     {
@@ -152,7 +206,6 @@ static int adc(int argc, char **argv)
     int result = RT_EOK;
     static rt_adc_device_t adc_device = RT_NULL;
     char *result_str;
-
     if (argc > 1)
     {
         if (!strcmp(argv[1], "probe"))

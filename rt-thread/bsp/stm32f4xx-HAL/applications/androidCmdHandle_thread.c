@@ -5,8 +5,7 @@
 #include "pthread.h"
 
 static rt_device_t uart_dev;
-ThreadStruct(ThreadStructName_def(AndroidCmdHandlel_THREAD));
-ThreadDef_Init(ThreadStructName_def(AndroidCmdHandlel_THREAD), AndroidCmdHandlel_class);
+ThreadDef_Init(AndroidCmdHandlel_class);
 
 static uint16_t crc16_calculate(const uint8_t *data, uint16_t length);
 /**/
