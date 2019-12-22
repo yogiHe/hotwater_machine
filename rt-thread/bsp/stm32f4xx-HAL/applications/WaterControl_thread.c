@@ -21,7 +21,7 @@ static void *run(void *arg)
 {
 //	config();
 	for(;;){
-		msleep(1000);
+		msleep(5000);
 //		HAL_ADC_Start(&hadc1);
 		get_water_temp();
 	}

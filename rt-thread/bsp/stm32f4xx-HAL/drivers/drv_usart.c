@@ -311,17 +311,17 @@ void HAL_UART_MspInit(UART_HandleTypeDef *uartHandle)
     {
         /* USART6 clock enable */
         __HAL_RCC_USART6_CLK_ENABLE();
-        __HAL_RCC_GPIOC_CLK_ENABLE();
+        __HAL_RCC_GPIOA_CLK_ENABLE();
         /**USART6 GPIO Configuration
         PC6     ------> USART6_TX
         PC7     ------> USART6_RX
         */
-        GPIO_InitStruct.Pin = GPIO_PIN_6 | GPIO_PIN_7;
+        GPIO_InitStruct.Pin = GPIO_PIN_11 | GPIO_PIN_12;
         GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
         GPIO_InitStruct.Pull = GPIO_PULLUP;
         GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
         GPIO_InitStruct.Alternate = GPIO_AF8_USART6;
-        HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+        HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
     }
 #endif /* BSP_USING_UART6 */
 }

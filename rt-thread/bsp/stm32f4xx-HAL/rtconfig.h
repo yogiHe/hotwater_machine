@@ -39,7 +39,7 @@
 #define RT_USING_DEVICE
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
-#define RT_CONSOLE_DEVICE_NAME "uart1"
+#define RT_CONSOLE_DEVICE_NAME "uart6"
 #define RT_VER_NUM 0x40001
 
 /* RT-Thread Components */
@@ -207,5 +207,6 @@
 #define RT_HSE_HCLK 84000000
 #define BSP_USING_UART1
 #define BSP_USING_UART2
-#define BSP_USING_ADC1
+#define BSP_USING_UART6
+
 #endif

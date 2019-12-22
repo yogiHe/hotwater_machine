@@ -14,9 +14,11 @@
 #include "user_def.h"
 
 extern ThreadStruct_Tydef WaterControl_class;
+extern ThreadStruct_Tydef AndroidCmdHandlel_class;
 int main(void)
 {
     /* user app entry */
 	WaterControl_class.start(NULL);
+	AndroidCmdHandlel_class.start(NULL);
     return 0;
 }

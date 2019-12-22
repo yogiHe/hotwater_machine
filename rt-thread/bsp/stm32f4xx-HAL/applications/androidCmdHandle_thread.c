@@ -4,11 +4,12 @@
 #include <rtdevice.h>
 #include "pthread.h"
 
+#define DEBUG(...)  rt_kprintf(__VA_ARGS__)
 static rt_device_t uart_dev;
 ThreadDef_Init(AndroidCmdHandlel_class);
 
 static uint16_t crc16_calculate(const uint8_t *data, uint16_t length);
-/**/
+static int stream_data_handle(unsigned char *pdata);
 static void start(void *arg);
 static void *run(void *arg);
 /**/
@@ -24,9 +25,9 @@ static void open_uart()
 
 	};
 
-	uart_dev = (rt_device_t)rt_device_find("uart2");
+	uart_dev = (rt_device_t)rt_device_find("uart1");
 	if(uart_dev == NULL){
-		rt_kprintf("uart2 run failed! can't find %s device!\n", "uart2");
+		rt_kprintf("uart2 run failed! can't find %s device!\n", "uart1");
 	}
 //	res = rt_device_set_rx_indicate(uart_device, uart_intput);
 	int res = rt_device_open(uart_dev, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_INT_RX );
@@ -44,13 +45,33 @@ static void init()
 
 static void *run(void *arg)
 {
+	unsigned char buffer[20];
+	unsigned int length;
+	int ret;
 	for(;;){
-	
+		length = rt_device_read(uart_dev, 0, buffer, sizeof(buffer));
+		if(length>0){
+			DEBUG("usart1 rx data length is %d data : %x %x\n", length, buffer[0], buffer[1]);
+			ret = stream_data_handle(buffer);
+			if(ret<0){
+				DEBUG("stream_data_handle return error %d\n", ret);
+			}			
+		}
+		else{
+			msleep(10);
+		}
 	}
 }
 
 static void start(void *arg)
 {
+	pthread_attr_t attr;
+	pthread_attr_init(&attr);
+	struct sched_param sched={sched_get_priority_max(SCHED_FIFO)-1};
+	pthread_attr_setschedpolicy(&attr, SCHED_FIFO);
+	pthread_attr_setschedparam(&attr, &sched);
+	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+	open_uart();
 	pthread_create(&tid, NULL, run, arg);
 }
 
@@ -71,7 +92,7 @@ static void send_out_water()
 
 static void stop_out_water()
 {
-
+	DEBUG("stop out water\n");
 }
 
 static void calibration()
@@ -121,6 +142,13 @@ static uint16_t crc16_calculate(const uint8_t *data, uint16_t length)
 	}
 	return (crc & 0xFFFF);
 }
+static int data_hanlde(unsigned char *pdata)
+{
+	DEBUG("first data is %x\n", *pdata);
+	switch(&pdata){
+		case 0x03:{stop_out_water();}break;
+	}
+}
 /*
 
 
@@ -131,24 +159,24 @@ static int stream_data_handle(unsigned char *pdata)
 	unsigned char pck_length = 0;
 	unsigned char data_length = 0;
 	uint16_t crc_value;
+	unsigned char length = *(pdata + 2);
 	if (*pdata != DIRDIRECTION_CTS) {
 		ret = ERR_DIRDIRECTION;
 		goto end;
 	}
-	if ((*(pdata + 1) == CHANNEL_ONE) ||
-	        (*(pdata + 1) == CHANNEL_ONE) ||
-	        (*(pdata + 1) == CHANNEL_ONE)) {
+	if ((*(pdata + 2) == CHANNEL_ONE) ||
+	        (*(pdata + 2) == CHANNEL_ONE) ||
+	        (*(pdata + 2) == CHANNEL_ONE)) {
 
-		unsigned char length = *(pdata + 1);
 		switch (length) {
 		case CHANNEL_ONE: {
-			data_length = *(pdata + 2) + length;
+			data_length = *(pdata + 3);
 		} break;
 		case CHANNEL_TWO: {
-			data_length = *(pdata + 2) << 8 + *(pdata + 3) + length;
+			data_length = *(pdata + 3) << 8 + *(pdata + 4);
 		} break;
 		case CHANNEL_FOUR: {
-			data_length = *(pdata + 2) << 8 + *(pdata + 3) + *(pdata + 4) + *(pdata + 5) + length;
+			data_length = *(pdata + 3) << 8 + *(pdata + 4) + *(pdata + 5) + *(pdata + 6);
 		} break;
 		default: break;
 		}
@@ -158,10 +186,14 @@ static int stream_data_handle(unsigned char *pdata)
 		ret = ERR_CHANNEL;
 		goto end;
 	}
-	pck_length = 1 + 1 + data_length;
+	pck_length = 1 + 1 + data_length+length;
 	crc_value = crc16_calculate(pdata, pck_length);
 	if(crc_value != *(uint16_t *)(pdata + pck_length-2))
 		ret = ERR_CRC;
+	else{
+		data_hanlde(pdata+1 +1+1+data_length);
+
+	}
 end:
 	return ret;
 }
