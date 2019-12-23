@@ -15,6 +15,8 @@ static void *run(void *arg);
 /**/
 static pthread_t tid;
 
+int fs[2];
+
 static void open_uart()
 {
 	struct serial_configure cfg={
@@ -75,13 +77,19 @@ static void start(void *arg)
 	pthread_create(&tid, NULL, run, arg);
 }
 
-
+static void send_cmd_ack(unsigned char cmd)
+{
+	unsigned char data[]={0x7e, DIRDIRECTION_CTS, CHANNEL_ONE, 0x01, 0x02,cmd,0x03,0x00,0x00,0x7e};
+	uint16_t crc = crc16_calculate(data+1, sizeof(data)-4);
+	data[sizeof(data)-3] = crc>>8;
+	data[sizeof(data)-2] = crc&0xff;
+}
 static void send_heart_once(void)
 {
-	unsigned char data[]={0x7e, DIRDIRECTION_STC, CHANNEL_ONE, 0x01, 0xff,0,0,0x7e};
-	uint16_t crc = crc16_calculate(data, sizeof(data)-2);
-	data[sizeof(data)-2] = crc>>8;
-	data[sizeof(data)-1] = crc&0xff;
+	unsigned char data[]={0x7e, DIRDIRECTION_CTS, CHANNEL_ONE, 0x01, 0xff,0,0,0x7e};
+	uint16_t crc = crc16_calculate(data, sizeof(data)-4);
+	data[sizeof(data)-3] = crc>>8;
+	data[sizeof(data)-2] = crc&0xff;
 }
 
 static void send_out_water()
@@ -93,6 +101,8 @@ static void send_out_water()
 static void stop_out_water()
 {
 	DEBUG("stop out water\n");
+	send_cmd_ack(STOPOUTWATER_CMD);
+
 }
 
 static void calibration()
@@ -146,7 +156,7 @@ static int data_hanlde(unsigned char *pdata)
 {
 	DEBUG("first data is %x\n", *pdata);
 	switch(&pdata){
-		case 0x03:{stop_out_water();}break;
+		case STOPOUTWATER_CMD:{stop_out_water();}break;
 	}
 }
 /*
