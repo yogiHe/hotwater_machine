@@ -8,20 +8,35 @@
 #include <rtthread.h>
 #include <pthread.h>
 
-ThreadDef_Init(WaterControl_class);
+#define RINGBUFFER_SIZE 4
 
+
+ThreadDef_Init(WaterControl_class);
 rt_adc_device_t adc_dev;
 static const int adc_channle = 8;
 static pthread_t tid;
-
 static int init(void);
 static float get_water_temp(void);
+static status_enum_tydef status=stop;
+struct rt_ringbuffer* ringbuffer_watercontrol;
+
 extern ADC_HandleTypeDef hadc1;
 static void *run(void *arg)
 {
+	unsigned char data;
+	unsigned int size;
 //	config();
 	for(;;){
 		msleep(5000);
+		size = rt_ringbuffer_get(ringbuffer_watercontrol, &data, 1);
+		if(size == 1){
+			switch(data){
+				case 0x03:
+
+				break;
+				case 0x01:break;
+			}
+		}
 //		HAL_ADC_Start(&hadc1);
 		get_water_temp();
 	}
@@ -72,9 +87,17 @@ void waterControl_thread_handle(void *parameter)
 
 
 }
-
+static gpio_init(void)
+{
+	rt_pin_mode(GET_PIN(), PIN_MODE_OUTPUT);
+	rt_pin_write(GET_PIN,PIN_HIGH);
+}
 static int init(void)
 {
+	status=stop;
+	WaterControl_class.pParameter = &status;
+	ringbuffer_watercontrol = rt_ringbuffer_create();
+	gpio_init();
 //	unsigned int ADC_DEV_CHANNEL=4;
 //	int value;
 	adc_dev = (rt_adc_device_t)rt_device_find("adc1");

@@ -5,6 +5,7 @@ typedef void(*pfunction_t)(void *arg);
 
 typedef struct {
 	pfunction_t start;
+	void *pParameter;
 }ThreadStruct_Tydef;
 
 #define ThreadDef_Init(name)  \

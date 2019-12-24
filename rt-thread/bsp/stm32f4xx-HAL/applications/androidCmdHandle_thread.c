@@ -15,7 +15,6 @@ static void *run(void *arg);
 /**/
 static pthread_t tid;
 
-int fs[2];
 
 static void open_uart()
 {
@@ -84,6 +83,14 @@ static void send_cmd_ack(unsigned char cmd)
 	data[sizeof(data)-3] = crc>>8;
 	data[sizeof(data)-2] = crc&0xff;
 }
+
+static void send_result_ack(unsigned char cmd, unsigned char result)
+{
+	unsigned char data[]={0x7e, DIRDIRECTION_CTS, CHANNEL_ONE, 0x01, 0x02,cmd,result,0x00,0x00,0x7e};
+	uint16_t crc = crc16_calculate(data+1, sizeof(data)-4);
+	data[sizeof(data)-3] = crc>>8;
+	data[sizeof(data)-2] = crc&0xff;
+}
 static void send_heart_once(void)
 {
 	unsigned char data[]={0x7e, DIRDIRECTION_CTS, CHANNEL_ONE, 0x01, 0xff,0,0,0x7e};
@@ -94,14 +101,43 @@ static void send_heart_once(void)
 
 static void send_out_water()
 {
-
-
+	unsigned char cmd = SENDOUTWATER_CMD;
+	unsigned int ret=-1;
+	DEBUG("send out water\n");
+	send_cmd_ack(SENDOUTWATER_CMD);
+	if(*(status_enum_tydef *)WaterControl_class.pParameter == run){
+		send_result_ack(cmd, 0x03);
+	}
+	else{
+		ret = rt_ringbuffer_put(ringbuffer_watercontrol, &cmd, sizeof(cmd));
+		if(ret = sizeof(cmd)){
+			send_result_ack(STOPOUTWATER_CMD, 0x02);
+		}
+		else{
+			send_result_ack(STOPOUTWATER_CMD, 0x01):
+		}		
+	}
 }
 
 static void stop_out_water()
 {
+	unsigned char cmd = STOPOUTWATER_CMD;
+	unsigned int ret=-1;
 	DEBUG("stop out water\n");
 	send_cmd_ack(STOPOUTWATER_CMD);
+	
+	if(*(status_enum_tydef *)WaterControl_class.pParameter == stop){
+		send_result_ack(STOPOUTWATER_CMD, 0x02);
+	}
+	else{
+		ret = rt_ringbuffer_put(ringbuffer_watercontrol, &cmd, sizeof(cmd));
+		if(ret = sizeof(cmd)){
+			send_result_ack(STOPOUTWATER_CMD, 0x03);
+		}
+		else{
+			send_result_ack(STOPOUTWATER_CMD, 0x01):
+		}		
+	}
 
 }
 

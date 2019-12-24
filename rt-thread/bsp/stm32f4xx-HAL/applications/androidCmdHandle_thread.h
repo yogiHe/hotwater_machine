@@ -9,7 +9,8 @@
 #define CHANNEL_TWO			0x02
 #define CHANNEL_FOUR		0x04
 
-#define STOPOUTWATER_CMD		0x03
+#define STOPOUTWATER_CMD	0x03
+#define SENDOUTWATER_CMD	0x01
 #define NO_ERR				0
 #define ERR_DIRDIRECTION	-1
 #define ERR_CHANNEL			-2
