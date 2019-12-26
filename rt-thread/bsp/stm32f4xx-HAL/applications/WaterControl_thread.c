@@ -4,7 +4,6 @@
 #include "pthread.h"
 #include "user_def.h"
 #include <board.h>
-#include <rtdevice.h>
 #include <rtthread.h>
 #include <pthread.h>
 
@@ -17,28 +16,25 @@ static const int adc_channle = 8;
 static pthread_t tid;
 static int init(void);
 static float get_water_temp(void);
-static status_enum_tydef status=stop;
-struct rt_ringbuffer* ringbuffer_watercontrol;
 
+
+static void water_heating(bool flag);
 extern ADC_HandleTypeDef hadc1;
+
 static void *run(void *arg)
 {
 	unsigned char data;
 	unsigned int size;
-//	config();
+	float Voltage;
 	for(;;){
 		msleep(5000);
-		size = rt_ringbuffer_get(ringbuffer_watercontrol, &data, 1);
-		if(size == 1){
-			switch(data){
-				case 0x03:
-
-				break;
-				case 0x01:break;
-			}
+		Voltage = get_water_temp();
+		if(Voltage < 0.1){
+			water_heating(true);
 		}
-//		HAL_ADC_Start(&hadc1);
-		get_water_temp();
+		else{
+			water_heating(false);
+		}
 	}
 }
 
@@ -75,8 +71,12 @@ static void cold_water_control(int timeout)
 */
 static void water_heating(bool flag)
 {
-
+	if(flag == true)
+		rt_pin_write(HEATING_PIN, PIN_HIGH);
+	else
+		rt_pin_write(HEATING_PIN, PIN_LOW);
 }
+
 /*
 *@brief This function is thread handle
 * @param  parameter:not use
@@ -87,16 +87,15 @@ void waterControl_thread_handle(void *parameter)
 
 
 }
-static gpio_init(void)
+
+static void gpio_init(void)
 {
-	rt_pin_mode(GET_PIN(), PIN_MODE_OUTPUT);
-	rt_pin_write(GET_PIN,PIN_HIGH);
+	rt_pin_mode(HEATING_PIN, PIN_MODE_OUTPUT);
+	rt_pin_write(HEATING_PIN, PIN_LOW);
 }
 static int init(void)
 {
-	status=stop;
-	WaterControl_class.pParameter = &status;
-	ringbuffer_watercontrol = rt_ringbuffer_create();
+
 	gpio_init();
 //	unsigned int ADC_DEV_CHANNEL=4;
 //	int value;

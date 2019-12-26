@@ -16,5 +16,9 @@
 #define ERR_CHANNEL			-2
 #define ERR_CRC				-3
 
-
+typedef enum status_control
+{
+	water_=0,
+	water_out,
+}status_enum_tydef;
 #endif

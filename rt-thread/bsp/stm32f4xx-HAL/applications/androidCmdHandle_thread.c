@@ -3,18 +3,18 @@
 #include <board.h>
 #include <rtdevice.h>
 #include "pthread.h"
+#include "waterout_control.h"
 
 #define DEBUG(...)  rt_kprintf(__VA_ARGS__)
 static rt_device_t uart_dev;
-ThreadDef_Init(AndroidCmdHandlel_class);
 
+ThreadDef_Init(AndroidCmdHandlel_class);
 static uint16_t crc16_calculate(const uint8_t *data, uint16_t length);
 static int stream_data_handle(unsigned char *pdata);
-static void start(void *arg);
-static void *run(void *arg);
+
 /**/
 static pthread_t tid;
-
+static status_enum_tydef status=water_;
 
 static void open_uart()
 {
@@ -41,8 +41,6 @@ static void init()
 {
 
 }
-
-
 
 static void *run(void *arg)
 {
@@ -73,7 +71,7 @@ static void start(void *arg)
 	pthread_attr_setschedparam(&attr, &sched);
 	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
 	open_uart();
-	pthread_create(&tid, NULL, run, arg);
+	pthread_create(&tid, &attr, run, arg);
 }
 
 static void send_cmd_ack(unsigned char cmd)
@@ -105,16 +103,16 @@ static void send_out_water()
 	unsigned int ret=-1;
 	DEBUG("send out water\n");
 	send_cmd_ack(SENDOUTWATER_CMD);
-	if(*(status_enum_tydef *)WaterControl_class.pParameter == run){
+	if(*(status_enum_tydef *)WaterOut_class.pParameter == water_out){
 		send_result_ack(cmd, 0x03);
 	}
 	else{
 		ret = rt_ringbuffer_put(ringbuffer_watercontrol, &cmd, sizeof(cmd));
-		if(ret = sizeof(cmd)){
+		if(ret = 1){
 			send_result_ack(STOPOUTWATER_CMD, 0x02);
 		}
 		else{
-			send_result_ack(STOPOUTWATER_CMD, 0x01):
+			send_result_ack(STOPOUTWATER_CMD, 0x01);
 		}		
 	}
 }
@@ -126,7 +124,7 @@ static void stop_out_water()
 	DEBUG("stop out water\n");
 	send_cmd_ack(STOPOUTWATER_CMD);
 	
-	if(*(status_enum_tydef *)WaterControl_class.pParameter == stop){
+	if(*(status_enum_tydef *)WaterOut_class.pParameter == water_){
 		send_result_ack(STOPOUTWATER_CMD, 0x02);
 	}
 	else{
@@ -135,7 +133,7 @@ static void stop_out_water()
 			send_result_ack(STOPOUTWATER_CMD, 0x03);
 		}
 		else{
-			send_result_ack(STOPOUTWATER_CMD, 0x01):
+			send_result_ack(STOPOUTWATER_CMD, 0x01);
 		}		
 	}
 
@@ -191,7 +189,7 @@ static uint16_t crc16_calculate(const uint8_t *data, uint16_t length)
 static int data_hanlde(unsigned char *pdata)
 {
 	DEBUG("first data is %x\n", *pdata);
-	switch(&pdata){
+	switch(*pdata){
 		case STOPOUTWATER_CMD:{stop_out_water();}break;
 	}
 }
