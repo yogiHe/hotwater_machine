@@ -8,9 +8,10 @@
 
 ThreadDef_Init(WaterOut_class);
 static void init(void);
-static unsigned char data[4];
+static unsigned char data[10];
 static unsigned int out_water_cnt;
-static unsigned char cold_water_flag;
+static unsigned char water_flag;
+static unsigned char stop_flag = 0;
 static pthread_t tid;
 /*冷热比*/
 static const unsigned int temp_tab[101] = {
@@ -34,17 +35,22 @@ static void *run(void *arg)
 	int size=0;
 	for (;;) {
 		size = rt_ringbuffer_data_len(ringbuffer_watercontrol);
-		if (size == sizeof(data)) {
+		if (size > 0) {
 			rt_ringbuffer_get(ringbuffer_watercontrol, data, sizeof(data));
 			switch (data[0]) {
 			case 0x01:
-				if(*((unsigned char *)arg+1) == 0x00){
-					out_water_cnt = *((unsigned short *)arg+3);
-					cold_water_flag = *((unsigned char *)arg+2);
+				rt_kprintf("begin water out control %d %d %d %d\n",data[0],data[1],data[2],data[3]);
+				if(*((unsigned char *)data+1) == 0x00){
+					out_water_cnt = (data[3]<<8)+data[4];
+					water_flag = data[2];
+					if(out_water_cnt>0)stop_flag=1;
+					rt_kprintf("ask water out control %d %d\n", out_water_cnt, water_flag);
 				}
 			break;
 			case 0x03:
 				out_water_cnt = 0;
+				rt_kprintf("stop out water\n");
+				begin_out_hotwater(0);
 				break;
 			}
 		}
@@ -53,12 +59,17 @@ static void *run(void *arg)
 		}
 		if(out_water_cnt>0){
 			out_water_cnt--;
-			if(cold_water_flag != 0x01){
+			if(water_flag == 0x01){
+				rt_kprintf("out hot water\n");
 				begin_out_hotwater(100);
 			}
 			else{
+				rt_kprintf("out cold water\n");
 				begin_out_hotwater(0);
 			}
+		}
+		else{
+		 stop_flag=0;
 		}
 	}
 }
@@ -67,7 +78,7 @@ static void start(void *arg)
 {
 	pthread_attr_t attr;
 	pthread_attr_init(&attr);
-	struct sched_param sched = {sched_get_priority_max(SCHED_FIFO) - 1};
+	struct sched_param sched = {sched_get_priority_max(SCHED_FIFO) - 2};
 	pthread_attr_setschedpolicy(&attr, SCHED_FIFO);
 	pthread_attr_setschedparam(&attr, &sched);
 	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
@@ -80,6 +91,7 @@ static void init(void)
 {
 	rt_pin_mode(VALVA_PIN, PIN_MODE_OUTPUT);
 	rt_pin_mode(MOTOR_GPIO_PIN, PIN_MODE_OUTPUT);
+	rt_pin_write(MOTOR_GPIO_PIN, PIN_LOW);
 	ringbuffer_watercontrol = rt_ringbuffer_create(10);
 }
 /*

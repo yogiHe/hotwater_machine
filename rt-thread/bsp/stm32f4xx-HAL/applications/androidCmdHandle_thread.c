@@ -44,13 +44,32 @@ static void init()
 
 static void *run(void *arg)
 {
-	unsigned char buffer[20];
+	unsigned char buffer[40];
 	unsigned int length;
+	unsigned char cnt=0;
 	int ret;
+	int test_len;
 	for(;;){
-		length = rt_device_read(uart_dev, 0, buffer, sizeof(buffer));
+		length = rt_device_read(uart_dev, 0, buffer+cnt, sizeof(buffer)-cnt);
 		if(length>0){
-			DEBUG("usart1 rx data length is %d data : %x %x\n", length, buffer[0], buffer[1]);
+			cnt = cnt + length;
+			if((buffer[0] == 0x7e) && buffer[cnt-1] == 0x7e){
+				DEBUG("usart1 rx  all data of package\n");
+				test_len =cnt;
+				cnt = 0;
+			}
+			else{
+				if(cnt >= sizeof(buffer))
+					cnt = 0;
+				DEBUG("usart1 rx data not all data of package %d %d %d %d\n",buffer[0], buffer[cnt-1], buffer[cnt-2],cnt);
+				continue;
+			}
+			DEBUG("usart1 rx data length is %d data :", test_len);
+			for(unsigned int i; i<sizeof(buffer); i++){
+				DEBUG("%d", buffer[i]);
+				
+			}
+			DEBUG("\n");
 			ret = stream_data_handle(buffer);
 			if(ret<0){
 				DEBUG("stream_data_handle return error %d\n", ret);
@@ -76,18 +95,20 @@ static void start(void *arg)
 
 static void send_cmd_ack(unsigned char cmd)
 {
-	unsigned char data[]={0x7e, DIRDIRECTION_CTS, CHANNEL_ONE, 0x01, 0x02,cmd,0x03,0x00,0x00,0x7e};
+	unsigned char data[]={0x7e, DIRDIRECTION_STC, CHANNEL_ONE , 0x02,cmd,0x03,0x00,0x00,0x7e};
 	uint16_t crc = crc16_calculate(data+1, sizeof(data)-4);
 	data[sizeof(data)-3] = crc>>8;
 	data[sizeof(data)-2] = crc&0xff;
+	rt_device_write(uart_dev, 0, data, sizeof(data));
 }
 
 static void send_result_ack(unsigned char cmd, unsigned char result)
 {
-	unsigned char data[]={0x7e, DIRDIRECTION_CTS, CHANNEL_ONE, 0x01, 0x02,cmd,result,0x00,0x00,0x7e};
+	unsigned char data[]={0x7e, DIRDIRECTION_STC, CHANNEL_ONE, 0x02,cmd,result,0x00,0x00,0x7e};
 	uint16_t crc = crc16_calculate(data+1, sizeof(data)-4);
 	data[sizeof(data)-3] = crc>>8;
 	data[sizeof(data)-2] = crc&0xff;
+	rt_device_write(uart_dev, 0, data, sizeof(data));
 }
 static void send_heart_once(void)
 {
@@ -95,19 +116,20 @@ static void send_heart_once(void)
 	uint16_t crc = crc16_calculate(data, sizeof(data)-4);
 	data[sizeof(data)-3] = crc>>8;
 	data[sizeof(data)-2] = crc&0xff;
+	rt_device_write(uart_dev, 0, data, sizeof(data));
 }
 
-static void send_out_water()
+static void send_out_water(unsigned char *pdata, unsigned int len)
 {
 	unsigned char cmd = SENDOUTWATER_CMD;
 	unsigned int ret=-1;
-	DEBUG("send out water\n");
 	send_cmd_ack(SENDOUTWATER_CMD);
 	if(*(status_enum_tydef *)WaterOut_class.pParameter == water_out){
 		send_result_ack(cmd, 0x03);
 	}
 	else{
-		ret = rt_ringbuffer_put(ringbuffer_watercontrol, &cmd, sizeof(cmd));
+		DEBUG("rt_ringbuffer_put len %d\n", len);
+		ret = rt_ringbuffer_put(ringbuffer_watercontrol, pdata, len);
 		if(ret = 1){
 			send_result_ack(STOPOUTWATER_CMD, 0x02);
 		}
@@ -129,8 +151,9 @@ static void stop_out_water()
 	}
 	else{
 		ret = rt_ringbuffer_put(ringbuffer_watercontrol, &cmd, sizeof(cmd));
-		if(ret = sizeof(cmd)){
-			send_result_ack(STOPOUTWATER_CMD, 0x03);
+		if(ret == sizeof(cmd)){
+			DEBUG("stop out water success\n");
+			send_result_ack(STOPOUTWATER_CMD, 0x02);
 		}
 		else{
 			send_result_ack(STOPOUTWATER_CMD, 0x01);
@@ -186,11 +209,14 @@ static uint16_t crc16_calculate(const uint8_t *data, uint16_t length)
 	}
 	return (crc & 0xFFFF);
 }
-static int data_hanlde(unsigned char *pdata)
+static int data_hanlde(unsigned char *pdata, unsigned len)
 {
-	DEBUG("first data is %x\n", *pdata);
+	DEBUG("data_hanlde *pdata is %x %x\n", *pdata, *(pdata+1));
 	switch(*pdata){
 		case STOPOUTWATER_CMD:{stop_out_water();}break;
+		case SENDOUTWATER_CMD:{
+			send_out_water(pdata, len);
+		}break;
 	}
 }
 /*
@@ -204,7 +230,7 @@ static int stream_data_handle(unsigned char *pdata)
 	unsigned char data_length = 0;
 	uint16_t crc_value;
 	unsigned char length = *(pdata + 2);
-	if (*pdata != DIRDIRECTION_CTS) {
+	if (*(pdata+1) != DIRDIRECTION_CTS) {
 		ret = ERR_DIRDIRECTION;
 		goto end;
 	}
@@ -230,14 +256,16 @@ static int stream_data_handle(unsigned char *pdata)
 		ret = ERR_CHANNEL;
 		goto end;
 	}
-	pck_length = 1 + 1 + data_length+length;
-	crc_value = crc16_calculate(pdata, pck_length);
-	if(crc_value != *(uint16_t *)(pdata + pck_length-2))
+	pck_length = 6 + data_length+length;
+	crc_value = crc16_calculate(pdata+1, pck_length-4);
+	
+	if(crc_value != *(uint16_t *)(pdata + pck_length-3))
 		ret = ERR_CRC;
 	else{
-		data_hanlde(pdata+1 +1+1+data_length);
+		data_hanlde(pdata+3+length, data_length);
 
 	}
+	DEBUG("crc data is %x  %x %d %d\n", crc_value, *(uint16_t *)(pdata + pck_length-3), pck_length,data_length);
 end:
 	return ret;
 }

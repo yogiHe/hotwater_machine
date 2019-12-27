@@ -4,8 +4,8 @@
 #include <rtdevice.h>
 #include <drv_gpio.h>
 
-#define HEATING_GPIO_GROUP	A
-#define HEATING_GPIO_PIN	6
+#define HEATING_GPIO_GROUP	C
+#define HEATING_GPIO_PIN	1
 #define HEATING_PIN			22
 
 

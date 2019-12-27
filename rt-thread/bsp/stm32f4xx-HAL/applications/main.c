@@ -15,10 +15,14 @@
 
 extern ThreadStruct_Tydef WaterControl_class;
 extern ThreadStruct_Tydef AndroidCmdHandlel_class;
+extern ThreadStruct_Tydef WaterLevel_class;
+extern ThreadStruct_Tydef WaterOut_class;
 int main(void)
 {
     /* user app entry */
 	WaterControl_class.start(NULL);
 	AndroidCmdHandlel_class.start(NULL);
+	WaterLevel_class.start(NULL);
+	WaterOut_class.start(NULL);
     return 0;
 }

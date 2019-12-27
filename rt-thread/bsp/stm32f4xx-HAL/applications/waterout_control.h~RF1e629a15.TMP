@@ -11,7 +11,7 @@
 
 #define MOTOR_GPIO_GROUP	C
 #define MOTOR_GPIO_PIN		2
-#define MOTOR_PIN			22
+#define MOTOR_PIN			GET_PIN(MOTOR_GPIO_GROUP, MOTOR_GPIO_PIN)
 
 
 extern struct rt_ringbuffer* ringbuffer_watercontrol;

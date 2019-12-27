@@ -17,16 +17,19 @@ static pthread_t tid;
 
 static void *run(void *arg)
 {
+	msleep(1000);
+	rt_pin_write(oe1_pin, PIN_HIGH);
 	for(;;){
 		if(rt_pin_read(LOW_LEVEL_PIN) == PIN_HIGH){
 			/*begin let cold water come in*/
+			rt_kprintf("water level is lower than 45%\n");
 			open_valva();
 		}
-		if(rt_pin_read(VALVE_RCOLD_PIN)==PIN_LOW){
+		if(rt_pin_read(HIGH_LEVEL_PIN)==PIN_LOW){
+			rt_kprintf("water level is full\n");
 			close_valva();
-
 		}
-		msleep(100);
+		msleep(1000);
 	}
 }
 
@@ -48,6 +51,23 @@ static void init(void)
 	rt_pin_mode(LOW_LEVEL_PIN, PIN_MODE_INPUT_PULLUP);
 	rt_pin_mode(HIGH_LEVEL_PIN, PIN_MODE_INPUT_PULLUP);
 	rt_pin_mode(VALVE_RCOLD_PIN, PIN_MODE_OUTPUT);
+	rt_pin_mode(PULLUP_LEVEL_PIN, PIN_MODE_OUTPUT);
+	rt_pin_mode(oe1_pin, PIN_MODE_OUTPUT);
+	rt_pin_write(oe1_pin, PIN_HIGH);
+	rt_pin_write(PULLUP_LEVEL_PIN, PIN_HIGH);
+	rt_pin_write(VALVE_RCOLD_PIN, PIN_LOW);
+	
+	/*
+	rt_pin_mode(10, PIN_MODE_OUTPUT);
+	rt_pin_mode(20, PIN_MODE_OUTPUT);
+	rt_pin_mode(21, PIN_MODE_OUTPUT);
+	rt_pin_mode(22, PIN_MODE_OUTPUT);
+	rt_pin_write(10, PIN_LOW);
+	rt_pin_write(20, PIN_LOW);
+	rt_pin_write(21, PIN_LOW);
+	rt_pin_write(22, PIN_LOW);
+	*/
+	
 }
 
 static void open_valva(void)

@@ -15,7 +15,7 @@ rt_adc_device_t adc_dev;
 static const int adc_channle = 8;
 static pthread_t tid;
 static int init(void);
-static float get_water_temp(void);
+static double get_water_temp(void);
 
 
 static void water_heating(bool flag);
@@ -27,9 +27,10 @@ static void *run(void *arg)
 	unsigned int size;
 	float Voltage;
 	for(;;){
-		msleep(5000);
+		msleep(1000);
 		Voltage = get_water_temp();
 		if(Voltage < 0.1){
+			rt_kprintf("water temp is lower than 90\n");
 			water_heating(true);
 		}
 		else{
@@ -114,12 +115,13 @@ static int init(void)
 	rt_kprintf("the voltage is :%d.%02d \n", vol / 100, vol % 100);
 }
 
-static float get_water_temp(void)
+static double get_water_temp(void)
 {
 //	int value;unsigned int ADC_DEV_CHANNEL=4;
 //	int ret=rt_device_read(adc_dev, ADC_DEV_CHANNEL, &value, 4);
 	int value = rt_adc_read(adc_dev, adc_channle);
 	rt_kprintf("the value is :%d  \n", value);
-	int vol = value * 330 / 4096;
-	rt_kprintf("the voltage is :%d.%02d \n", vol / 100, vol % 100);
+	double vol = value * 3.3 / 4096;
+	rt_kprintf("the voltage is :%d.%d \n", (int)vol%100, ((int)(vol *1000))%1000);
+	return vol;
 }
