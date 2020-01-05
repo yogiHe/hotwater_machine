@@ -5,7 +5,7 @@
 #define SERVER_PORT	"8080"
 #define SETServerInfo_Stream	"AT+CIPSTART=TCP,$SERVER_IP,$SERVER_PORT"
 
-
+#define EN_4V_PIN_NUM	54
 /*
 #define CMD_CHECK(cmd, cmp_value) 
 

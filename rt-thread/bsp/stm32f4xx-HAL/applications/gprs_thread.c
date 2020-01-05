@@ -3,11 +3,10 @@
 #include "user_def.h"
 #include <rtdevice.h>
 
-#define write(A) //rt_device_write();
-#define read(A)
 
 static void open_uart();
 static void gprs_system_on(void);
+static void gpio_init(void);
 
 ThreadDef_Init(gprs_class);
 static rt_device_t uart_dev;
@@ -22,6 +21,7 @@ static void *run(void *arg)
 static void start(void *arg)
 {
 	pthread_attr_t attr;
+	gpio_init();
 	gprs_system_on();
 	pthread_attr_init(&attr);
 	struct sched_param sched={sched_get_priority_max(SCHED_FIFO)};
@@ -30,13 +30,30 @@ static void start(void *arg)
 	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
 	pthread_create(&tid, &attr, run, arg);
 }
-
+static void write(char *pbuffer, unsigned int lenght)
+{
+	rt_device_write(uart_dev, 0, pbuffer, lenght);	
+}
+static void read(unsigned char *pbuffer, unsigned int lenght, unsigned int timeout)
+{
+	int pos=0;
+	for(int i=0; i<timeout/10; i++){
+		if(lenght <= 0)
+			msleep(10);
+		else{
+			if(*(pbuffer+pos-1) == '\r')
+				break;
+		}
+		pos = rt_device_read(uart_dev, 0, pbuffer+pos, lenght);	
+	}
+}
 static void cmd_check(char *cmd, char *check_value, int count){
 	static char buffer[20]={0};
 	rt_kprintf("initial system %s", cmd);
 	for(int i=0; i<count; i++){
-		write(cmd);
-		read(buffer);
+		write(cmd, strlen(cmd));
+		msleep(100);
+		read(buffer, 0xFF, 1000);
 		if(strncmp(buffer, check_value, strlen(check_value)) == 0){
 			break;
 		}
@@ -46,8 +63,6 @@ static void cmd_check(char *cmd, char *check_value, int count){
 	}
 	rt_kprintf("\r\n");
 }
-
-
 
 static void gprs_system_on(void)
 {
@@ -59,7 +74,7 @@ static void gprs_system_on(void)
 }
 static void tcp_connect(char *Server_IP, char *Server_Port)
 {
-	write(SETServerInfo_Stream);
+	write(SETServerInfo_Stream, strlen(SETServerInfo_Stream));
 }
 
 static void tcp_send(unsigned char *pdata, unsigned int lenght)
@@ -86,4 +101,10 @@ static void open_uart()
 
 	((rt_serial_t *)uart_dev)->ops->configure((rt_serial_t *)uart_dev , &cfg);
 	((rt_serial_t *)uart_dev)->ops->control((rt_serial_t *)uart_dev ,RT_DEVICE_CTRL_SET_INT, NULL);
+}
+
+static void gpio_init(void)
+{
+	rt_pin_mode(EN_4V_PIN_NUM, PIN_MODE_OUTPUT);
+	rt_pin_write(EN_4V_PIN_NUM, PIN_HIGH);
 }

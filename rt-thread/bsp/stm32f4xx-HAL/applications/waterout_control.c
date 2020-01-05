@@ -9,12 +9,14 @@
 ThreadDef_Init(WaterOut_class);
 static void init(void);
 static void stop_out_hotwater(void);
+static void begin_out_water(unsigned int temperature, unsigned int millisecond);
 static unsigned char data[10];
-static unsigned int out_water_cnt;
+static unsigned int out_water_total;
 static unsigned char water_flag;
 static unsigned char stop_flag = 0;
 static pthread_t tid;
-
+static double pre_out_ml;
+static double water_flow;
 extern struct rt_ringbuffer* ringbuffer_androidTx;
 /*冷热比*/
 static const unsigned int temp_tab[101] = {
@@ -44,14 +46,54 @@ static void *run(void *arg)
 			case 0x01:
 				rt_kprintf("begin water out control %d %d %d %d\n",data[0],data[1],data[2],data[3]);
 				if(*((unsigned char *)data+1) == 0x00){
-					out_water_cnt = ((data[3]<<8)+data[4]) * 0x10;
-					water_flag = data[2];
-					if(out_water_cnt>0)stop_flag=1;
-					rt_kprintf("ask water out control %d %d\n", out_water_cnt, water_flag);
+					int time=0;
+					out_water_total = ((data[3]<<8)+data[4]) * 0x10;
+					if(out_water_total > pre_out_ml){
+						time = ((out_water_total-pre_out_ml)/water_flow)+2000;
+					}
+					else
+						time=2000;
+					if(*((unsigned char *)data+2) == 0x01){
+						begin_out_water(100, time);
+					}
+					else{
+						begin_out_water(0, time);
+					}
+					clear_stop_flag();
+					//rt_kprintf("ask water out control %d %d\n", out_water_cnt, water_flag);
 				}
 			break;
+			case 0x02:
+				rt_kprintf("begin calibration %d\n",data[3]);
+				if(*((unsigned char *)data+1) == 0x00){
+					if(*((unsigned char *)data+2) == 0x01){
+						if(*((unsigned char *)data+2) == 0x01){
+							begin_out_water(100, 2000);
+						}
+						else{
+							begin_out_water(0, 2000);
+						}
+					}
+					else if(*((unsigned char *)data+2) == 0x02){
+						pre_out_ml=((data[3]<<8)&0xFF00) | data[4];
+					}
+					else if(*((unsigned char *)data+2) == 0x03){
+						if(*((unsigned char *)data+2) == 0x01){
+							begin_out_water(100, 5000);
+						}
+						else{
+							begin_out_water(0, 5000);
+						}
+					}
+					else if(*((unsigned char *)data+2) == 0x04){
+						water_flow=((((data[3]<<8)&0xFF00) | data[4]) - pre_out_ml)/3000;
+					}
+					
+				}
+
+			break;
 			case 0x03:
-				out_water_cnt = 0;
+				set_stop_flag();
 				rt_kprintf("stop out water\n");
 //				begin_out_hotwater(0);
 				break;
@@ -59,28 +101,6 @@ static void *run(void *arg)
 		}
 		else{
 			msleep(100);
-		}
-		if(out_water_cnt>0){
-			out_water_cnt--;
-			if(water_flag == 0x01){
-				rt_kprintf("out hot water\n");
-				begin_out_hotwater(100);
-			}
-			else{
-				rt_kprintf("out cold water\n");
-				begin_out_hotwater(0);
-			}
-			if(out_water_cnt == 0){
-				unsigned char done = 1;
-				rt_kprintf("out  water  OK\n");
-				rt_ringbuffer_put(ringbuffer_androidTx, &done, sizeof(done));
-			}
-			if(out_water_cnt == 0)
-				stop_out_hotwater();
-		}
-		else{
-		 stop_flag=0;
-			stop_out_hotwater();
 		}
 	}
 }
@@ -132,7 +152,36 @@ static void begin_out_hotwater(unsigned int temperature)
 	rt_pin_write(MOTOR_PIN, PIN_LOW);
 
 }
-
+static inline void msleep_timeout(unsigned int millisecond)
+{
+	while(stop_flag==0){
+		msleep(1);
+	}
+}
+static void begin_out_water(unsigned int temperature, unsigned int millisecond)
+{
+	unsigned char done = 1;
+	unsigned int 	temp = temp_tab[temperature];
+	unsigned int valva_delay = millisecond * temp / (temp + 1);
+	unsigned int motor_delay = millisecond / (temp + 1);
+	if(temp == 0xffffffff){
+		valva_delay=500;
+		motor_delay = 0;
+	}
+	if (temperature > 100) {
+		rt_kprintf("temperature is higher than 100 :%d \n", temperature);
+		return;
+	}
+	rt_kprintf("valva delay is:%d  motor delay is %d tmp %x\n", valva_delay, motor_delay, temp);
+	rt_pin_write(VALVA_PIN, PIN_HIGH);
+	msleep_timeout(valva_delay);
+	rt_pin_write(VALVA_PIN, PIN_LOW);
+	rt_pin_write(MOTOR_PIN, PIN_HIGH);
+	msleep_timeout(motor_delay);
+	rt_pin_write(MOTOR_PIN, PIN_LOW);
+	rt_kprintf("out  water  OK\n");
+	rt_ringbuffer_put(ringbuffer_androidTx, &done, sizeof(done));
+}
 static void stop_out_hotwater(void)
 {
 	rt_pin_write(VALVA_PIN, PIN_LOW);

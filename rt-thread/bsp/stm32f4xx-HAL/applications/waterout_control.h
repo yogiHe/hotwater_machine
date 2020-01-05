@@ -13,6 +13,8 @@
 #define MOTOR_GPIO_PIN		2
 #define MOTOR_PIN			10
 
+#define clear_stop_flag() stop_flag=0
+#define set_stop_flag()   stop_flag=1
 
 extern struct rt_ringbuffer* ringbuffer_watercontrol;
 extern ThreadStruct_Tydef WaterOut_class;
