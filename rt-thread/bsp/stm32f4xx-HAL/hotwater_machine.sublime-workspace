@@ -11,7 +11,7 @@
 			"file": "applications/androidCmdHandle_thread.c",
 			"settings":
 			{
-				"buffer_size": 4239,
+				"buffer_size": 6727,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -20,7 +20,7 @@
 			"file": "applications/androidCmdHandle_thread.h",
 			"settings":
 			{
-				"buffer_size": 414,
+				"buffer_size": 515,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -158,15 +158,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 4239,
+						"buffer_size": 6727,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2255,
-								2255
+								0,
+								0
 							]
 						],
 						"settings":
@@ -187,15 +187,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 414,
+						"buffer_size": 515,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								288,
-								304
+								0,
+								0
 							]
 						],
 						"settings":

@@ -11,7 +11,8 @@ static rt_device_t uart_dev;
 ThreadDef_Init(AndroidCmdHandlel_class);
 static uint16_t crc16_calculate(const uint8_t *data, uint16_t length);
 static int stream_data_handle(unsigned char *pdata);
-
+static void send_result_ack(unsigned char cmd, unsigned char result);
+struct rt_ringbuffer* ringbuffer_androidTx;
 /**/
 static pthread_t tid;
 static status_enum_tydef status=water_;
@@ -26,7 +27,7 @@ static void open_uart()
 
 	};
 
-	uart_dev = (rt_device_t)rt_device_find("uart1");
+	uart_dev = (rt_device_t)rt_device_find("uart6");
 	if(uart_dev == NULL){
 		rt_kprintf("uart2 run failed! can't find %s device!\n", "uart1");
 	}
@@ -76,6 +77,19 @@ static void *run(void *arg)
 			}			
 		}
 		else{
+			if(rt_ringbuffer_data_len(ringbuffer_androidTx)>0){
+				unsigned char data;
+				rt_ringbuffer_get(ringbuffer_androidTx, &data, sizeof(data));
+				switch(data){
+					case 0x01:
+						DEBUG("make done\n", ret);
+					  send_result_ack(SENDOUTWATER_CMD, 0x02);
+						break;
+					default:
+						DEBUG("MAKE DONE ERROR\n", ret);
+					break;
+				}
+			}
 			msleep(10);
 		}
 	}
@@ -84,6 +98,7 @@ static void *run(void *arg)
 static void start(void *arg)
 {
 	pthread_attr_t attr;
+	ringbuffer_androidTx = rt_ringbuffer_create(20);
 	pthread_attr_init(&attr);
 	struct sched_param sched={sched_get_priority_max(SCHED_FIFO)-1};
 	pthread_attr_setschedpolicy(&attr, SCHED_FIFO);
@@ -130,11 +145,11 @@ static void send_out_water(unsigned char *pdata, unsigned int len)
 	else{
 		DEBUG("rt_ringbuffer_put len %d\n", len);
 		ret = rt_ringbuffer_put(ringbuffer_watercontrol, pdata, len);
-		if(ret = 1){
-			send_result_ack(STOPOUTWATER_CMD, 0x02);
+		if(ret == len){
+	//		send_result_ack(SENDOUTWATER_CMD, 0x02);
 		}
 		else{
-			send_result_ack(STOPOUTWATER_CMD, 0x01);
+			send_result_ack(SENDOUTWATER_CMD, 0x01);
 		}		
 	}
 }

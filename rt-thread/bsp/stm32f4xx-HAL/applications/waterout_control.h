@@ -5,13 +5,13 @@
 #include "user_def.h"
 #include <drv_gpio.h>
 
-#define VALVA_GPIO_GROUP 		C
-#define VALVA_GPIO_PIN 			1
-#define VALVA_PIN  				GET_PIN(VALVA_GPIO_GROUP, VALVA_GPIO_PIN)
+#define VALVA_GPIO_GROUP 		A
+#define VALVA_GPIO_PIN 			4
+#define VALVA_PIN  				20
 
 #define MOTOR_GPIO_GROUP	C
 #define MOTOR_GPIO_PIN		2
-#define MOTOR_PIN			22
+#define MOTOR_PIN			10
 
 
 extern struct rt_ringbuffer* ringbuffer_watercontrol;

@@ -17,7 +17,8 @@ static pthread_t tid;
 static int init(void);
 static double get_water_temp(void);
 
-
+int L_LEVEL=0;
+int H_LEVEL=0;
 static void water_heating(bool flag);
 extern ADC_HandleTypeDef hadc1;
 
@@ -29,11 +30,11 @@ static void *run(void *arg)
 	for(;;){
 		msleep(1000);
 		Voltage = get_water_temp();
-		if(Voltage < 0.1){
+		if(Voltage < 2.66){
 			rt_kprintf("water temp is lower than 90\n");
 			water_heating(true);
 		}
-		else{
+		else if(Voltage >2.69){
 			water_heating(false);
 		}
 	}
@@ -109,6 +110,8 @@ static int init(void)
 //	rt_device_control(adc_dev, RT_ADC_CMD_ENABLE, (void*)ADC_DEV_CHANNEL);
 //	rt_device_read(adc_dev, ADC_DEV_CHANNEL, &value, 4);
 	rt_adc_enable(adc_dev, adc_channle);
+	rt_adc_enable(adc_dev, 7);
+	rt_adc_enable(adc_dev, 14);
 	int value = rt_adc_read(adc_dev, adc_channle);
 	rt_kprintf("the value is :%d \n", value);
 	int vol = value * 330 / 4096;
@@ -119,7 +122,12 @@ static double get_water_temp(void)
 {
 //	int value;unsigned int ADC_DEV_CHANNEL=4;
 //	int ret=rt_device_read(adc_dev, ADC_DEV_CHANNEL, &value, 4);
+	L_LEVEL = rt_adc_read(adc_dev, 14);
+	H_LEVEL = rt_adc_read(adc_dev, 7);
 	int value = rt_adc_read(adc_dev, adc_channle);
+
+	rt_kprintf("L_LEVEL vol is %d\n", L_LEVEL * 330 / 4096);
+	rt_kprintf("H_LEVEL vol is %d\n", H_LEVEL * 330 / 4096);
 	rt_kprintf("the value is :%d  \n", value);
 	double vol = value * 3.3 / 4096;
 	rt_kprintf("the voltage is :%d.%d \n", (int)vol%100, ((int)(vol *1000))%1000);

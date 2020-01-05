@@ -13,8 +13,8 @@
 #define PULLUP_LEVEL_PIN  			25
 
 #define VALVE_RCOLD_GPIO_GROUP 		A
-#define VALVE_RCOLD_GPIO_PIN 		4
-#define VALVE_RCOLD_PIN  			20
+#define VALVE_RCOLD_GPIO_PIN 		5
+#define VALVE_RCOLD_PIN  			21
 
 #define oe1_pin 	9
 #endif

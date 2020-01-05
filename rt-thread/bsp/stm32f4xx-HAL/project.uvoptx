@@ -118,6 +118,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>DLGUARM</Key>
+          <Name>狅[</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -149,55 +150,71 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>49</LineNumber>
+          <LineNumber>393</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134240208</Address>
+          <Address>134246862</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>.\applications\waterlevel.c</Filename>
+          <Filename>Libraries\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_adc.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\rtthread_stm32f4xx\applications/waterlevel.c\49</Expression>
+          <Expression>\\rtthread_stm32f4xx\Libraries/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc.c\393</Expression>
         </Bp>
         <Bp>
           <Number>1</Number>
           <Type>0</Type>
-          <LineNumber>56</LineNumber>
+          <LineNumber>104</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134240264</Address>
+          <Address>134240952</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>.\applications\waterlevel.c</Filename>
+          <Filename>.\applications\waterout_control.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\rtthread_stm32f4xx\applications/waterlevel.c\56</Expression>
+          <Expression>\\rtthread_stm32f4xx\applications/waterout_control.c\104</Expression>
         </Bp>
         <Bp>
           <Number>2</Number>
           <Type>0</Type>
-          <LineNumber>51</LineNumber>
+          <LineNumber>125</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>0</Address>
+          <Address>134238334</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>0</BreakIfRCount>
-          <Filename>.\applications\waterlevel.c</Filename>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>.\applications\WaterControl_thread.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression></Expression>
+          <Expression>\\rtthread_stm32f4xx\applications/WaterControl_thread.c\125</Expression>
         </Bp>
         <Bp>
           <Number>3</Number>
           <Type>0</Type>
-          <LineNumber>58</LineNumber>
+          <LineNumber>126</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134238348</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>.\applications\WaterControl_thread.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\rtthread_stm32f4xx\applications/WaterControl_thread.c\126</Expression>
+        </Bp>
+        <Bp>
+          <Number>4</Number>
+          <Type>0</Type>
+          <LineNumber>105</LineNumber>
           <EnabledFlag>1</EnabledFlag>
           <Address>0</Address>
           <ByteObject>0</ByteObject>
@@ -206,7 +223,7 @@
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>0</BreakIfRCount>
-          <Filename>.\applications\waterlevel.c</Filename>
+          <Filename>.\applications\waterout_control.c</Filename>
           <ExecCommand></ExecCommand>
           <Expression></Expression>
         </Bp>
@@ -257,6 +274,10 @@
       <pSingCmds></pSingCmds>
       <pMultCmds></pMultCmds>
       <SystemViewers>
+        <Entry>
+          <Name>System Viewer\ADC1</Name>
+          <WinId>35902</WinId>
+        </Entry>
         <Entry>
           <Name>System Viewer\GPIOA</Name>
           <WinId>35903</WinId>
