@@ -14,7 +14,7 @@ static pthread_t tid;
 static void *run(void *arg)
 {
 	for(;;){
-	
+		msleep(100);
 	}
 }
 
@@ -47,10 +47,10 @@ static void read(unsigned char *pbuffer, unsigned int lenght, unsigned int timeo
 		pos = rt_device_read(uart_dev, 0, pbuffer+pos, lenght);	
 	}
 }
-static void cmd_check(char *cmd, char *check_value, int count){
+static void cmd_check(char *cmd, char *check_value, unsigned int count){
 	static char buffer[20]={0};
 	rt_kprintf("initial system %s", cmd);
-	for(int i=0; i<count; i++){
+	for(unsigned int i=0; i<count; i++){
 		write(cmd, strlen(cmd));
 		msleep(100);
 		read(buffer, 0xFF, 1000);
@@ -67,10 +67,12 @@ static void cmd_check(char *cmd, char *check_value, int count){
 static void gprs_system_on(void)
 {
 	open_uart();
-	cmd_check("AT\r\n", "OK", 0xFFFFFFFF);
-	cmd_check("AT+CPIN?\r\n", "OK", 0x50);
-	cmd_check("AT+CIICR\r\n", "OK", 0x50);
-	cmd_check("AT+CIFSR\r\n", "OK", 0x50);
+	cmd_check("ATE0\r\n", "\r\nOK", 0xFFFFFF);
+	cmd_check("AT\r\n", "\r\nOK", 0xFFFFFF);
+	cmd_check("AT+CPIN?\r\n", "\r\n+CPIN:", 0x50);
+	cmd_check("AT+CGREG?\r\n", "\r\n+CPIN:", 0x50);
+	cmd_check("AT+CIICR\r\n", "\r\nOK", 0x50);
+	cmd_check("AT+CIFSR\r\n", "\r\nOK", 0x50);
 }
 static void tcp_connect(char *Server_IP, char *Server_Port)
 {
@@ -106,5 +108,7 @@ static void open_uart()
 static void gpio_init(void)
 {
 	rt_pin_mode(EN_4V_PIN_NUM, PIN_MODE_OUTPUT);
+	rt_pin_mode(PWK_PIN_NUM, PIN_MODE_OUTPUT);
 	rt_pin_write(EN_4V_PIN_NUM, PIN_HIGH);
+	rt_pin_write(PWK_PIN_NUM, PIN_HIGH);
 }

@@ -12,6 +12,7 @@ ThreadDef_Init(AndroidCmdHandlel_class);
 static uint16_t crc16_calculate(const uint8_t *data, uint16_t length);
 static int stream_data_handle(unsigned char *pdata);
 static void send_result_ack(unsigned char cmd, unsigned char result);
+static void calibration(unsigned char *pdata, unsigned int len);
 struct rt_ringbuffer* ringbuffer_androidTx;
 /**/
 static pthread_t tid;
@@ -134,6 +135,25 @@ static void send_heart_once(void)
 	rt_device_write(uart_dev, 0, data, sizeof(data));
 }
 
+static void calibration(unsigned char *pdata, unsigned int len)
+{
+	unsigned char cmd = CALIBRATION_CMD;
+	unsigned int ret=-1;
+	send_cmd_ack(cmd);
+	if(*(status_enum_tydef *)WaterOut_class.pParameter == water_out){
+		send_result_ack(cmd, 0x03);
+	}
+	else{
+		DEBUG("rt_ringbuffer_put len %d\n", len);
+		ret = rt_ringbuffer_put(ringbuffer_watercontrol, pdata, len);
+		if(ret == len){
+	//		send_result_ack(SENDOUTWATER_CMD, 0x02);
+		}
+		else{
+			send_result_ack(SENDOUTWATER_CMD, 0x01);
+		}		
+	}
+}
 static void send_out_water(unsigned char *pdata, unsigned int len)
 {
 	unsigned char cmd = SENDOUTWATER_CMD;
@@ -177,10 +197,6 @@ static void stop_out_water()
 
 }
 
-static void calibration()
-{
-
-}
 
 static void err_alarm()
 {
@@ -231,6 +247,9 @@ static int data_hanlde(unsigned char *pdata, unsigned len)
 		case STOPOUTWATER_CMD:{stop_out_water();}break;
 		case SENDOUTWATER_CMD:{
 			send_out_water(pdata, len);
+		}break;
+		case CALIBRATION_CMD:{
+			calibration(pdata, len);
 		}break;
 	}
 }

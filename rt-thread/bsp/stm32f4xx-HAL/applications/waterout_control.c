@@ -41,6 +41,7 @@ static void *run(void *arg)
 	for (;;) {
 		size = rt_ringbuffer_data_len(ringbuffer_watercontrol);
 		if (size > 0) {
+			water_flag = 1;
 			rt_ringbuffer_get(ringbuffer_watercontrol, data, sizeof(data));
 			switch (data[0]) {
 			case 0x01:
@@ -98,6 +99,7 @@ static void *run(void *arg)
 //				begin_out_hotwater(0);
 				break;
 			}
+			water_flag = 0;
 		}
 		else{
 			msleep(100);
@@ -126,6 +128,7 @@ static void init(void)
 	rt_pin_write(VALVA_PIN, PIN_LOW);
 	rt_pin_write(VALVA_PIN, PIN_HIGH);
 	ringbuffer_watercontrol = rt_ringbuffer_create(10);
+	WaterOut_class.pParameter = &water_flag;
 }
 /*
 temperature [1:1:100]

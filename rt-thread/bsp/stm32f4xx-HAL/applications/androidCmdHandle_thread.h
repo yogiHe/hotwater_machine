@@ -10,6 +10,7 @@
 #define CHANNEL_FOUR		0x04
 
 #define STOPOUTWATER_CMD	0x03
+#define CALIBRATION_CMD	0x02
 #define SENDOUTWATER_CMD	0x01
 #define NO_ERR				0
 #define ERR_DIRDIRECTION	-1
