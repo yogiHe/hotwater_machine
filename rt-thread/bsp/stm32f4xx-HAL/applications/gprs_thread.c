@@ -49,30 +49,36 @@ static void read(unsigned char *pbuffer, unsigned int lenght, unsigned int timeo
 }
 static void cmd_check(char *cmd, char *check_value, unsigned int count){
 	static char buffer[20]={0};
-	rt_kprintf("initial system %s", cmd);
+//	rt_kprintf("initial system %s", cmd);
 	for(unsigned int i=0; i<count; i++){
 		write(cmd, strlen(cmd));
-		msleep(100);
+		msleep(1000);
 		read(buffer, 0xFF, 1000);
 		if(strncmp(buffer, check_value, strlen(check_value)) == 0){
 			break;
 		}
 		else{
-			rt_kprintf(".");
+//			rt_kprintf(".");
 		}
 	}
-	rt_kprintf("\r\n");
+//	rt_kprintf("\r\n");
 }
 
 static void gprs_system_on(void)
 {
 	open_uart();
+	msleep(3000);
 	cmd_check("ATE0\r\n", "\r\nOK", 0xFFFFFF);
 	cmd_check("AT\r\n", "\r\nOK", 0xFFFFFF);
+	cmd_check("AT+CSQ\r\n", "\r\n+CSQ", 0xFFFFFF);
 	cmd_check("AT+CPIN?\r\n", "\r\n+CPIN:", 0x50);
-	cmd_check("AT+CGREG?\r\n", "\r\n+CPIN:", 0x50);
+	cmd_check("AT+CREG?\r\n", "\r\n+CREG: 0,1", 0x50);
+	cmd_check("AT+CGREG?\r\n", "\r\n+CGREG:", 0x50);
+	cmd_check("AT+CGATT?\r\n", "\r\n+CGATT: 1", 0x50);
+	cmd_check("AT+CSQ\r\n", "\r\n+CSQ", 0xFFFFFF);
+	cmd_check("AT+CSTT=\"CMNET\"\r\n", "\r\nOK", 0xFFFFFF);
 	cmd_check("AT+CIICR\r\n", "\r\nOK", 0x50);
-	cmd_check("AT+CIFSR\r\n", "\r\nOK", 0x50);
+	cmd_check("AT+CIFSR\r\n", "\r\nOK", 0x1);
 }
 static void tcp_connect(char *Server_IP, char *Server_Port)
 {

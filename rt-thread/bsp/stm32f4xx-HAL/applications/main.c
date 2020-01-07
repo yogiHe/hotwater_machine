@@ -21,10 +21,10 @@ extern ThreadStruct_Tydef gprs_class;
 int main(void)
 {
     /* user app entry */
-	WaterControl_class.start(NULL);
-	AndroidCmdHandlel_class.start(NULL);
-	WaterLevel_class.start(NULL);
-	WaterOut_class.start(NULL);
-//	gprs_class.start(NULL);
+//	WaterControl_class.start(NULL);
+//	AndroidCmdHandlel_class.start(NULL);
+//	WaterLevel_class.start(NULL);
+//	WaterOut_class.start(NULL);
+	gprs_class.start(NULL);
     return 0;
 }

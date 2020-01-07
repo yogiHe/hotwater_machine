@@ -1,0 +1,17 @@
+\t (00:00:13) allegro 17.4 P001 Windows SPB 64-bit Edition
+\t (00:00:13)     Journal start - Tue Jan  7 21:42:55 2020
+\t (00:00:13)         Host=DESKTOP-5ROSEI1 User=yingj Pid=22376 CPUs=4
+\t (00:00:13) CmdLine= e:\cadence\cadence\cadence_spb_17.4-2019\tools\bin\allegro.exe F:\hotwater_machine\hotwater_machine\HotwaterMachine_V1_0_10312009.brd
+\t (00:00:13) 
+   (00:00:13) Loading axlcore.cxt 
+\t (00:00:14) Opening existing design...
+\i (00:00:14) QtSignal SPBFoldDockArea FoldAreaTabWidget currentChanged HotwaterMachine_V1_0_10312009
+\d (00:00:14) Design opened: F:/hotwater_machine/hotwater_machine/HotwaterMachine_V1_0_10312009.brd
+\i (00:00:14) trapsize 2575
+\i (00:00:15) trapsize 2707
+\i (00:00:15) trapsize 2755
+\i (00:00:15) trapsize 2468
+\i (00:00:15) trapsize 2468
+\i (00:00:16) generaledit 
+\i (02:24:26) exit 
+\t (02:24:28)     Journal end - Wed Jan  8 00:07:11 2020

@@ -32,22 +32,33 @@
       (Path "Design Resources" ".\hotwatermachine_v1_0_20191029.dsn"
          "SCHEMATIC1")
       (Select "Design Resources" ".\hotwatermachine_v1_0_20191029.dsn"
-         "SCHEMATIC1" "MCU"))
+         "SCHEMATIC1" "GPRS"))
     (HierarchyView)
     (Doc
       (Type "COrCapturePMDoc")
       (Frame
-        (Placement "44 0 1 -1 -1 -1 -1 0 239 0 485"))
+        (Placement "44 0 1 -1 -1 -1 -1 0 200 0 485"))
       (Tab 0))
     (Doc
       (Type "COrSchematicDoc")
       (Frame
-        (Placement "44 0 1 -1 -1 -1 -1 5 991 28 507")
+        (Placement "44 0 1 -1 -1 -1 -1 5 1030 28 507")
         (Scroll "514 266")
         (Zoom "100")
         (Occurrence "/"))
       (Path
          "F:\HOTWATER_MACHINE\HOTWATER_MACHINE\HOTWATERMACHINE_V1_0_20191029.DSN")
       (Schematic "SCHEMATIC1")
-      (Page "MCU")))
+      (Page "MCU"))
+    (Doc
+      (Type "COrSchematicDoc")
+      (Frame
+        (Placement "44 0 1 -1 -1 -1 -1 5 1030 28 507")
+        (Scroll "508 0")
+        (Zoom "100")
+        (Occurrence "/"))
+      (Path
+         "F:\HOTWATER_MACHINE\HOTWATER_MACHINE\HOTWATERMACHINE_V1_0_20191029.DSN")
+      (Schematic "SCHEMATIC1")
+      (Page "GPRS")))
   (PartMRUSelector))
